@@ -370,9 +370,14 @@ We discuss this limitation in Section XXX.
 
 \section{Experiments}
 
-Following previous works, we use the A, B and C dataset as benchmarks.
-Due to difficulties in optimizing representations, we use XXX resolution on the benchmark.
+Following previous works, we use the A, B and C dataset as benchmarks to compare to the state-of-the-art.
+We run all additional experiments on the XXX video illustarted in Figure XXX.
+Due to the time-consuming operation of optimizing SIREN representations, we optimize and evaluate all models on a XXX resolution.
 For the A dataset, we follow the standard 8 video split XXX.
+
+Unless specified other-wise, all experiments are run with a SIREN of depth XXX and width XXX.
+We use an omega of XXX and a lambda of XXX.
+We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of XXX during XXX epochs.
 
 We start by showing the impact of controling the fit to high frequency without the optical flow loss in section XXX.
 We show that while limiting the frequency fitted does improve generlization, it does not allow to reach 
@@ -384,6 +389,7 @@ We present an ablation in Section XXX, providing inisight and appropriate settin
 
 Finally, we report a surprising additional result in Section XXX:
 We show that XXX.
+
 
 
 \subsection{Optical Flow constaint and High Frequencies}

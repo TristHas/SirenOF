@@ -1,0 +1,11 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Related Work}{}% 2
+\BOOKMARK [1][-]{section.3}{Method}{}% 3
+\BOOKMARK [1][-]{section.4}{Experiments}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Optical Flow constaint and High Frequencies}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{State of the art models}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{Ablation study}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.4}{Qualitative Analysis}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.5}{Video fitting}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Limitations}{}% 10
+\BOOKMARK [1][-]{section.6}{Conclusion}{}% 11

@@ -84,12 +84,12 @@
 \begin{abstract}
 Recent works have shown the ability of neural implicit representations (NIR) to carry meaningful representations of signal derivatives.
 In this work, we leverage this property to perform video frame interpolation
-by explicitly constraining the derivatives of the signal to satisfy the optical flow constraint.
+by explicitly constraining the derivatives of the NIR to satisfy the optical flow constraint equation.
 We achieve state of the art video frame interpolation on limited motion ranges
 using only a target video and its optical flow, without learning the interpolation operator from additional training data.
-We further show that constraining the signal derivatives to satisfy the optical flow constraint not only
+We further show that constraining the NIR derivatives not only
 allows to interpolate intermediate frames but also improves the ability of narrow networks to fit observed frames,
-which suggests possible applications to NIR optimization and video compression.
+which suggests potential applications to NIR optimization and video compression.
 \end{abstract}
 
 \section{Introduction}
@@ -102,17 +102,17 @@ which suggests possible applications to NIR optimization and video compression.
 %% The inability of rough heuristics to hold in generality have favored learning-based approaches
 
 Many core concepts across the fields of signal processing are defined in terms of continuous functions and their derivatives:
-surface curvature is the derivative of surface normals in space,
+surfaces are continuous manifolds in space,
 motion is a rate of change in space through time, etc.
 In contrast, the modern digital infrastructure is inherently discrete:
-digital sensors capture discrete observations regularly sampled in time and space;
-digital computers store and process discrete samples of signals.
-In order to model continuous notions from discrete samples of continuous signals,
+digital sensors capture discrete observations of the world sampled in time and space;
+digital computers store and process discrete representations of signals.
+In order to model continuous notions on discrete signal representations,
 classical signal processing approaches have resorted to a variety of heuristics and assumptions,
 often taking the form of constant first or second derivatives of the signal between consecutive observations.
 The lack of generality of any such handcrafted heuristics,
-combined with the ever improving quantitative results of machine learning approaches,
-have led to the near ubiquitous use of machine learning approaches in recent signal processing research.
+combined with the ever improving quantitative results of Machine Learning (ML) approaches,
+have led to the near ubiquitous use of ML approaches in recent signal processing research.
 These approaches leverage large collections of data to infer statistical properties of signals instead of hand-crafted heuristics.
 % With the advent of deep learning, recent state-of-the art approaches have moved away from explicitly applying theoretically derived heuristics,
 % leveraging the flexibility of end-to-end representations, relying on large training datasets to decide on the heuristics.
@@ -122,9 +122,9 @@ In computer vision, Video Frame Interpolation (VFI) is one task representative o
 VFI models aim to infer intermediate frames between consecutive frames of a video.
 To do so, most successful approaches rely on the optical flow as an approximation of the motion field
 to guide the interpolation of pixel intensities from the grid of two consecutive frames onto the pixel grid of intermediate frames.
-Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames.
-The value of each pixel in the infered intermediate frame is thus computed by shifting the pixel intesities of the observed frames following the 
-optical flow directions and interpolating these shifted pixel intensities on the intermediate frame's pixel grid.
+Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames [CITE].
+The value of each pixel in the infered intermediate frame is computed by first shifting the pixel intesities of the observed frames following the 
+optical flow directions, and then interpolating the shifted pixel intensities onto the intermediate frame's pixel grid.
 These approaches suffer from the following two limitations:
 
 \begin{itemize}
@@ -132,17 +132,17 @@ These approaches suffer from the following two limitations:
 \item Linear interpolation of pixel intesities along the optical flow directions does not hold in practice. % Check me 
 \end{itemize}
 
-These limitations share the same root cause: discretization.
+These limitations share a common root cause: discretization.
 Indeed, both the optical flow constraint and the constant motion field assumption only truly hold at the infinitesimal scale, 
 for much smaller time deltas than typical FPS used in practice.
 
-These limitations have motivated the use of ML approaches in which the frame interpolation operation is instead learned 
-from the statistical regularities of a set of training videos, without explicitly formulating any assumption. 
+ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections, 
+without explicitly formulating any assumption on the optical flow. 
 While these approaches have achieved great success in terms of benchmark performance,
 they are prone to suffer from generalization errors when applied to new arbitrary videos. % Check me
 Indeed differences between the training set distribution (i.e. the benchmark videos) and the target video distribution hinders the performance of ML approaches:
 differences in the range of motion, exposure time and frame-per-second have been shown to limit the
-generalization of state-of-the-art models to videos in the wild [CITE]. %check me
+generalization of state-of-the-art models to video frame interpolation in the wild [CITE]. %check me
 
 \begin{figure}[h]
 \centering
@@ -279,7 +279,7 @@ with minimum distance $d$ to the ground-truth signal:
 \begin{equation}
 \begin{aligned}
 f_{\theta}:& \:(x, y, t) \rightarrow (R, G, B) \\
-s.t. \: \theta =& min_{\Theta} \int_{(x,y,t)} d(f_{\theta}(x,y,t), v(x,y,t))
+s.t. \: \theta =& min_{\Theta} \iiint d(f_{\theta}(x,y,t), v(x,y,t)) dx dy dt
 \end{aligned}
 \end{equation}
 
@@ -353,8 +353,8 @@ we can now define the optical flow regularization loss
 \end{equation}
 
 This loss constrains the derivatives of the signal to be orthogonal to the optical flow and
-can be intuitively understood as keeping constant brightness along the optical flow trajectories,
-thus dumping the high frequency temporal variations observed in Figure XXX.
+can be intuitively understood as keeping constant brightness along the optical flow trajectories.
+%thus dumping the high frequency temporal variations observed in Figure XXX.
 The total loss we use to optimize the NIR is a weighted sum of these two terms:
 
 \begin{equation}
@@ -390,20 +390,68 @@ We present an ablation in Section XXX, providing inisight and appropriate settin
 Finally, we report a surprising additional result in Section XXX:
 We show that XXX.
 
-
-
 \subsection{Optical Flow constaint and High Frequencies}
 
-SIRENs are parameterized with a factor omega that allows to control the frequency.
+Figure 2 illustrates the fact that applying the optical flow constraint smoothes the high-frequency variations of vanilla SIREN representation.
+We start by questioning wether the OF constraint does more than simply constraining the high frequency variations of the representation. 
+To do so, we compare the results of vanilla SIREN representations geared towards different frequency and compare the 
+best obtained results to OF-constrained representations.
+We constrain the SIREN frequency by varying their $\omega$ parameter, and report our comparison in Figure XXX.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{"omega_wo_of"}
+\caption{NEED TO SHOW TRAINING CURVE AND THRESHOLD ATTAINED BY OF}
+\end{figure}
+
+While constraining the high frequency with low $\omega$ does improve the ability to interpolate intermediate frames,
+vanilla SIREN models remain well under the OF-constrained representations, 
+confirming than the OF constraint provides more simply restricting the high temporal frequencies.
 
 \subsection{State of the art models}
 
-Table XXX shows the results of
+Table XXX quantitatively compare the results of our model to state-of the art VFI models on different datasets. 
+We show that 
+
+
+\begin{table}[]
+\caption{XXX}
+\begin{tabular}{l | l | l }
+ &  Adobe-240FPS  [XXX] &  X4K [XXX]  \\
+\hline
+Super-SloMo [XXX] &  27.77/0.8866 & 27.38/0.8527  \\
+RRIN [XXX]  & 32.37/0.9624 & 30.70/0.9270  \\
+BMBC [XXX]  & 27.83/0.9172 & 27.42/0.8585   \\
+AdaCof [XXX] & 35.50/0.9684 & 34.61/0.9218 \\
+ABME   [XXX] & 35.28/0.9669 & 34.30/0.9195 \\
+FILM   [XXX] &	35.97/0.9710 & 35.14/0.9397 \\
+Ours	& 36.52/0.9770 & 35.06/0.9441 \\
+\end{tabular}
+
+\end{table}
+
+	
+
+\begin{table}[]
+\caption{XXX}
+\begin{tabular}{l | l }
+	    &   ND Scene [9] \\
+\hline
+V-NF        &  23.30/0.7260\\
+NSFF [10]   & 28.03/0.9250\\
+CURE [11]   & 36.91/0.9843\\
+Ours	    &  29.22/0.9215
+\end{tabular}
+
+\end{table}
+
+
 
 \subsection{Ablation study}
 
 Next, we highlight the 
+
+
 
 \subsection{Qualitative Analysis}
 
@@ -416,25 +464,41 @@ Ask Sho-kun.
 
 \section{Limitations}
 
-% Time to fit the video.
+While we believe our results to be very encouraging, the proposed approach is not yet practical.
+Here, we discuss what we believe to be the three main limitations of, and possible solutions to, our approach
 
+\textbf{Slow optimization process.} Fitting XXX frames of a video at XXX resolution currently takes XXX hours on a XXX GPU using Pytorch.
+This computation time is a huge draw back as it limits our ability to process full resolution video as well as 
+to explore different hyper parameters and variants of the methods.
+We expect new methods speeding up the convergence of video NIR to be very benefic to this line of research.
+Given recent successes of NIR approaches to high impact applications (i.e., video compression [CITE]),
+We hopefully expect to see advances in NIR optimisation research.
 
 % Relying on optical flow model.
+\textbf{Reliance on trained optical flow model.}
+SIREN models allow us to apply the optical flow on the exact derivaties of the signal,
+thus bypassing the heuristics of classical approach without relying on machine learning.
+The optical flow we use, however, is given by a trained ML model, which raises two problems: 
+it is subject to generalization error, and the flow is computed on discrete samples and then subject to 
+undesirable changes in illumination and occlusion.
+Future work will aim to bypass our reliance on ML-based OF using proxy constraints on the exact derivatives.
 
-
-% Large range motion.
-
+\textbf{Inability to interpolate high motion range videos.} 
+In its current form, our approach only regularizes observed frames of the video.
+This has proven sufficient to reach state-of-the art on low motion ranges but is not sufficient for large motions.
+% However, there is still a lot of room for improvement,
+For larger motions several improvements can be considered, most notably by regularizing intermediate frames.
+Texture conservation in intermediate frames, interpolated optical flows. 
 
 \section{Conclusion}
 
-
+In this paper, we have shown that regularizing NIR using the optical flow constraint equation 
+enabled VFI without relying on ML to perform the interpolation step.
+We show that this approach is sufficient to reach state-of-the-art interpolation 
+on low montion ranges 
 
 \section*{References}
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-Note that the Reference section does not count towards the page limit.
+
 \medskip
 
 {

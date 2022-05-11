@@ -123,33 +123,26 @@ VFI models aim to infer intermediate frames between consecutive frames of a vide
 To do so, most successful approaches rely on the optical flow as an approximation of the motion field
 to guide the interpolation of pixel intensities from the grid of two consecutive frames onto the pixel grid of intermediate frames.
 Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames [CITE].
-The value of each pixel in the infered intermediate frame is computed by first shifting the pixel intesities of the observed frames following the 
+The value of each pixel in the infered intermediate frame is computed by first shifting the pixel intesities of the observed frames following the
 optical flow directions, and then interpolating the shifted pixel intensities onto the intermediate frame's pixel grid.
 These approaches suffer from the following two limitations:
 
 \begin{itemize}
 \item Optical flow constraint used to infer the optical flow holds for limited situations. % Check me
-\item Linear interpolation of pixel intesities along the optical flow directions does not hold in practice. % Check me 
+\item Linear interpolation of pixel intesities along the optical flow directions does not hold in practice. % Check me
 \end{itemize}
 
 These limitations share a common root cause: discretization.
-Indeed, both the optical flow constraint and the constant motion field assumption only truly hold at the infinitesimal scale, 
+Indeed, both the optical flow constraint and the constant motion field assumption only truly hold at the infinitesimal scale,
 for much smaller time deltas than typical FPS used in practice.
 
-ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections, 
-without explicitly formulating any assumption on the optical flow. 
+ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections,
+without explicitly formulating any assumption on the optical flow.
 While these approaches have achieved great success in terms of benchmark performance,
-they are prone to suffer from generalization errors when applied to new arbitrary videos. % Check me
-Indeed differences between the training set distribution (i.e. the benchmark videos) and the target video distribution hinders the performance of ML approaches:
+they are prone to generalization errors when applied to unseen videos. % Check me
+Indeed differences between the training set distribution (i.e. VFI benchmark videos) and the target video distribution hinders the performance of ML approaches:
 differences in the range of motion, exposure time and frame-per-second have been shown to limit the
 generalization of state-of-the-art models to video frame interpolation in the wild [CITE]. %check me
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\textwidth]{Method}
-\caption{Illustration of our approach}
-\end{figure}
-
 
 % Implicit Neural Representation
 %Meanwhile, another line of research has shown that deep architectures themselves provide powerful priors to represent signals (DIP, SIREN).
@@ -158,38 +151,45 @@ generalization of state-of-the-art models to video frame interpolation in the wi
 %Why:
 %- Depth provides more representational power.
 %- Architecture provides inductive bias,
-In the mean time, research on implicit representations aim to represent continuous signals in digital computer as parameterized functions. 
-In paritcular, the SIREN [CITE] model has shown that representing signals using Multi Layer Perceptrons (MLP) with sine activation functions
+In the mean time, research on implicit representations seek better discrete representations of continuous signals.
+In recent years Neural Implicit Representations (NIR), i.e. representing signals as Neural Networks (NN) have offered valuable
+alternative as representations for a variety of signals [CITE].
+Of particular interest to us is the work of SIREN [CITE], in which it has been shown that representing
+signals using Multi Layer Perceptrons (MLP) with sine activation functions
 allowed for meaningful representations of the signal derivatives.
-This raises the question wether theoretical approaches can be applied at the infinitesimal scale, i.e., on the exact gradient
-of NIR rather than applying these notions on the discretely sampled observation through heuristics.
-
-%Neural Implicit Representations represent continuous signals as neural networks.
-%Most notably, the authors of [SIREN] have shown in a series of experiment that
-%These new representations have shown promissing results at tackling physical problems in the form of PDE.
-%a particular neural network (NN) architecture was capable to can carry meaningful information in their derivatives.
-% Then present our method.
-In this work, we propose one such application:
-we regularize the derivatives of SIREN representations of videos to satisfy the optical flow constraint, i.e., to be orthogonal to their optical flow 
+Inspired by this work, we question wether such approach may be used to guide the interpolation
+process of VFI by applying the OF on the exact representation derivatives,
+thus avoiding the discretization pitfalls of traditional approaches.
+We do so by regularizing the derivatives of SIREN representations of videos to satisfy the optical flow constraint,
+i.e., to be orthogonal to their optical flow
 (which we compute using existing state-of-the-art OF models).
-Our approach outperforms most existing machine learning-based approaches on small motion range benchmarks,
+We find that this approach outperforms most existing machine learning-based approaches on small motion range benchmarks,
 without relying on machine learning to learn the interpolation:
 we simply regularize the implicit representation using the definition
 of the optical flow and the optical flow constraint equation.
 In this sense, our approaches is most similar to classical VIF approaches,
 except that instead of wrapping the OF on discrete explicit frame representations,
 we apply the optical flow constraint on the exact gradient of the the NIR.
-Our method is thus not subject to any mismatch between training and test data,
-thus avoiding the pitfalls of machine learning approaches.
-Furthermore, our approach can sample any number of frame in-between the observed frames due to the continuous nature of the representation.
-In addition to its application to VFI, we also show that constraining the gradient of the model also improves the ability of narrow MLPs to fit the signal,
-suggesting potential applications in NIR optimisation and video compression.
+Our method is thus not subject to any mismatch between training and test data.
+Furthermore, our approach can sample any number of frame in-between the observed frames
+due to the continuous nature of the representation.
+In addition to its application to VFI, we also show that constraining the gradient
+of the model also improves the ability of narrow MLPs to fit the signal,
+suggesting potential applications in NIR optimization and video compression.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{Method}
+\caption{Illustration of our approach}
+\end{figure}
 
 To summarize, the contributions of this work are:
 \begin{itemize}
 \item We propose a regularization method for SIREN which achieve state-of-the-art video frame interpolation on small motion ranges.
-\item In contrast to other state-of-the art approaches, our approach does not rely on training on a large external training set but works given only the target video and its estimated optical flow.
-\item We show that our regularization approach not only helps generalizing to intermediate frame generalization but also helps narrow models fit the observed frames.
+\item In contrast to other state-of-the art approaches, our approach does not rely on training on a large external training set.
+It only relies on the target video and its estimated optical flow.
+\item We show that our regularization approach not only helps generalizing to intermediate frame generalization
+but also helps narrow models fit the observed frames.
 \end{itemize}
 
 On the other hand, our approach (in its current form) presents important limitations:
@@ -200,8 +200,8 @@ On the other hand, our approach (in its current form) presents important limitat
 \item Our method currently only works on limited motion range. It does not match state-of-the art ML models on large motion ranges.
 \end{itemize}
 
-While we aknowledge the importance of the above limitations, 
-we believe these are not fundamental limitations of our approach.
+While we acknowledge the importance of the above limitations,
+we believe these to not be fundamental limitations of our approach but rather important future NIR research directions.
 We discuss these limitations at length and present possible axis to tackle them in Section XXX.
 The remainder of this paper is organized as follows:
 We briefly present some related work in Section XXX, the detail of our method in Section XXX,
@@ -283,8 +283,9 @@ s.t. \: \theta =& min_{\Theta} \iiint d(f_{\theta}(x,y,t), v(x,y,t)) dx dy dt
 \end{aligned}
 \end{equation}
 
-where the distance funtion $d$ may either be the Peak Signal to Noise Ratio (PSNR) or the Structural Similarity Index Measure (SSIM).
-To do so, we only have access to regularly sampled observation of the signal $v$ (i.e. the explicit representation of the video), which we denote as:
+where the distance function $d$ may either be the Peak Signal to Noise Ratio (PSNR) or the Structural Similarity Index Measure (SSIM).
+To do so, we only have access to regularly sampled observation of the signal $v$
+(i.e. the explicit representation of the video), which we denote as:
 
 \begin{equation}
 \begin{aligned}
@@ -305,7 +306,7 @@ using the following loss function
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.8\textwidth]{"w_wo_OF"}
-\caption{Illustration of NIR frame interpolation with and without optical flow regularization. 
+\caption{Illustration of NIR frame interpolation with and without optical flow regularization.
 Without regularization (middle top), intermediate frames show unnatural high-frequency variations.
 Regularizing the NIR to satisfy the optical flow constraint equation result in nicely interpolated frames (middle bottom).
 }
@@ -364,7 +365,7 @@ The total loss we use to optimize the NIR is a weighted sum of these two terms:
 where $\lambda$ is a hyperparameter taking values between 0 and 1 whose impact we investigate in the following section.
 The exactitude of the optical flow constraint plays in our favor:
 As we regularize the true derivative of the signal representation, we do not assume constant derivatives of the signal on any interval.
-On the other hand, the optical flow we used was computed from discrete consecutive frames, 
+On the other hand, the optical flow we used was computed from discrete consecutive frames,
 and thus does not represent the true infinitesimal motion range.
 We discuss this limitation in Section XXX.
 
@@ -380,7 +381,7 @@ We use an omega of XXX and a lambda of XXX.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of XXX during XXX epochs.
 
 We start by showing the impact of controling the fit to high frequency without the optical flow loss in section XXX.
-We show that while limiting the frequency fitted does improve generlization, it does not allow to reach 
+We show that while limiting the frequency fitted does improve generlization, it does not allow to reach
 the same accuracy as optical flow regularization, showing that OF regularization does more than just limiting the fitted frequencies.
 
 In Section XXX, we compare our results to state of the art quantitatively on standard benchmarks.
@@ -393,8 +394,8 @@ We show that XXX.
 \subsection{Optical Flow constaint and High Frequencies}
 
 Figure 2 illustrates the fact that applying the optical flow constraint smoothes the high-frequency variations of vanilla SIREN representation.
-We start by questioning wether the OF constraint does more than simply constraining the high frequency variations of the representation. 
-To do so, we compare the results of vanilla SIREN representations geared towards different frequency and compare the 
+We start by questioning wether the OF constraint does more than simply constraining the high frequency variations of the representation.
+To do so, we compare the results of vanilla SIREN representations geared towards different frequency and compare the
 best obtained results to OF-constrained representations.
 We constrain the SIREN frequency by varying their $\omega$ parameter, and report our comparison in Figure XXX.
 
@@ -405,13 +406,13 @@ We constrain the SIREN frequency by varying their $\omega$ parameter, and report
 \end{figure}
 
 While constraining the high frequency with low $\omega$ does improve the ability to interpolate intermediate frames,
-vanilla SIREN models remain well under the OF-constrained representations, 
+vanilla SIREN models remain well under the OF-constrained representations,
 confirming than the OF constraint provides more simply restricting the high temporal frequencies.
 
 \subsection{State of the art models}
 
-Table XXX quantitatively compare the results of our model to state-of the art VFI models on different datasets. 
-We show that 
+Table XXX quantitatively compare the results of our model to state-of the art VFI models on different datasets.
+We show that
 
 
 \begin{table}[]
@@ -430,7 +431,7 @@ Ours	& 36.52/0.9770 & 35.06/0.9441 \\
 
 \end{table}
 
-	
+
 
 \begin{table}[]
 \caption{XXX}
@@ -449,13 +450,13 @@ Ours	    &  29.22/0.9215
 
 \subsection{Ablation study}
 
-Next, we highlight the 
+Next, we highlight the
 
 
 
 \subsection{Qualitative Analysis}
 
-% 
+%
 Ask Sho-kun.
 
 \subsection{Video fitting}
@@ -468,7 +469,7 @@ While we believe our results to be very encouraging, the proposed approach is no
 Here, we discuss what we believe to be the three main limitations of, and possible solutions to, our approach
 
 \textbf{Slow optimization process.} Fitting XXX frames of a video at XXX resolution currently takes XXX hours on a XXX GPU using Pytorch.
-This computation time is a huge draw back as it limits our ability to process full resolution video as well as 
+This computation time is a huge draw back as it limits our ability to process full resolution video as well as
 to explore different hyper parameters and variants of the methods.
 We expect new methods speeding up the convergence of video NIR to be very benefic to this line of research.
 Given recent successes of NIR approaches to high impact applications (i.e., video compression [CITE]),
@@ -478,24 +479,24 @@ We hopefully expect to see advances in NIR optimisation research.
 \textbf{Reliance on trained optical flow model.}
 SIREN models allow us to apply the optical flow on the exact derivaties of the signal,
 thus bypassing the heuristics of classical approach without relying on machine learning.
-The optical flow we use, however, is given by a trained ML model, which raises two problems: 
-it is subject to generalization error, and the flow is computed on discrete samples and then subject to 
+The optical flow we use, however, is given by a trained ML model, which raises two problems:
+it is subject to generalization error, and the flow is computed on discrete samples and then subject to
 undesirable changes in illumination and occlusion.
 Future work will aim to bypass our reliance on ML-based OF using proxy constraints on the exact derivatives.
 
-\textbf{Inability to interpolate high motion range videos.} 
+\textbf{Inability to interpolate high motion range videos.}
 In its current form, our approach only regularizes observed frames of the video.
 This has proven sufficient to reach state-of-the art on low motion ranges but is not sufficient for large motions.
 % However, there is still a lot of room for improvement,
 For larger motions several improvements can be considered, most notably by regularizing intermediate frames.
-Texture conservation in intermediate frames, interpolated optical flows. 
+Texture conservation in intermediate frames, interpolated optical flows.
 
 \section{Conclusion}
 
-In this paper, we have shown that regularizing NIR using the optical flow constraint equation 
+In this paper, we have shown that regularizing NIR using the optical flow constraint equation
 enabled VFI without relying on ML to perform the interpolation step.
-We show that this approach is sufficient to reach state-of-the-art interpolation 
-on low montion ranges 
+We show that this approach is sufficient to reach state-of-the-art interpolation
+on low montion ranges
 
 \section*{References}
 

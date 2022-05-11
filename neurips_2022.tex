@@ -30,7 +30,8 @@
 \usepackage{microtype}      % microtypography
 \usepackage{xcolor}         % colors
 \usepackage{graphicx}
-
+\usepackage{subcaption}
+\usepackage{caption}
 
 \title{Optical Flow Regularization of Implicit Neural Representations for Video Frame Interpolation}
 
@@ -310,6 +311,7 @@ using the following loss function
 Without regularization (middle top), intermediate frames show unnatural high-frequency variations.
 Regularizing the NIR to satisfy the optical flow constraint equation result in nicely interpolated frames (middle bottom).
 }
+\label{fig_w_wo_OF}
 \end{figure}
 
 However, we found that optimizing the NIR to only minimize this observation loss leads to overfitting the observation with high temporal frequencies:
@@ -371,28 +373,29 @@ We discuss this limitation in Section XXX.
 
 \section{Experiments}
 
-Following previous works, we use the A, B and C dataset as benchmarks to compare to the state-of-the-art.
-We run all additional experiments on the XXX video illustarted in Figure XXX.
-Due to the time-consuming operation of optimizing SIREN representations, we optimize and evaluate all models on a XXX resolution.
-For the A dataset, we follow the standard 8 video split XXX.
+Following previous works, we use the Adobe[CITE], X4K[CITE] and ND Scene[CITE] dataset as benchmarks to compare to the state-of-the-art.
+We run all additional experiments on the 720p240fps1.mov video of Adobe dataset illustarted in Figure \ref{fig_w_wo_OF}.
+Due to the time-consuming operation of optimizing SIREN representations, we optimize and evaluate all models on a 240$\times$360 resolution.
+For the Adobe dataset, we used the same dataset splitting approach as Super-SloMo, where eight videos were used as the testing set.
 
-Unless specified other-wise, all experiments are run with a SIREN of depth XXX and width XXX.
-We use an omega of XXX and a lambda of XXX.
-We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of XXX during XXX epochs.
+Unless specified other-wise, all experiments are run with a SIREN of depth 6 and width 720.
+We use an omega of 25 and a lambda of 0.12.
+We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of 3.6e-5 during 15k epochs.
 
-We start by showing the impact of controling the fit to high frequency without the optical flow loss in section XXX.
+We start by showing the impact of controling the fit to high frequency without the optical flow loss in section \ref{sec_of_hf}.
 We show that while limiting the frequency fitted does improve generlization, it does not allow to reach
 the same accuracy as optical flow regularization, showing that OF regularization does more than just limiting the fitted frequencies.
 
-In Section XXX, we compare our results to state of the art quantitatively on standard benchmarks.
-We show that our approach achieves state-of-the-art resuklts on low-range motion datasets, but underperforms existing methods on the high-range motion dataset.
-We present an ablation in Section XXX, providing inisight and appropriate settings on the different model hyperparameters and a qualitative analysis of our results in Section XXX.
+In Section \ref{sec_sota}, we compare our results to state of the art quantitatively on standard benchmarks.
+We show that our approach achieves state-of-the-art results on low-range motion datasets, but underperforms existing methods on the high-range motion dataset.
+We present an ablation in Section \ref{sec_abl}, providing inisight and appropriate settings on the different model hyperparameters and a qualitative analysis of our results in Section \ref{sec_qua}.
 
-Finally, we report a surprising additional result in Section XXX:
-We show that XXX.
+Finally, we report a surprising additional result in Section \ref{sec_video_fit}
+We show that our proposed optical flow regularization loss can help the lightweight SIREN model to fit the video better. 
+This indicates that our method is potentially helpful for video compression.
 
 \subsection{Optical Flow constaint and High Frequencies}
-
+\label{sec_of_hf}
 Figure 2 illustrates the fact that applying the optical flow constraint smoothes the high-frequency variations of vanilla SIREN representation.
 We start by questioning wether the OF constraint does more than simply constraining the high frequency variations of the representation.
 To do so, we compare the results of vanilla SIREN representations geared towards different frequency and compare the
@@ -410,7 +413,7 @@ vanilla SIREN models remain well under the OF-constrained representations,
 confirming than the OF constraint provides more simply restricting the high temporal frequencies.
 
 \subsection{State of the art models}
-
+\label{sec_sota}
 Table XXX quantitatively compare the results of our model to state-of the art VFI models on different datasets.
 We show that
 
@@ -449,19 +452,226 @@ Ours	    &  29.22/0.9215
 
 
 \subsection{Ablation study}
+\label{sec_abl}
+
+\begin{figure}
+\centering
+\begin{subfigure}{1\textwidth}
+	\centering
+    \includegraphics[width=0.6\linewidth]{Epochs.jpg}
+    \caption{Epochs}
+\end{subfigure}
+\begin{subfigure}{0.6\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{lambda.jpg}
+	\caption{$\lambda$}
+\end{subfigure}%
+\begin{subfigure}{0.6\textwidth}
+\centering
+    \includegraphics[width=1\linewidth]{LR.jpg}
+	\caption{Learning Rate}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+\centering    
+    \includegraphics[width=1\linewidth]{omega.jpg}
+    \caption{$\omega$}
+\end{subfigure}%
+\begin{subfigure}{0.6\textwidth}
+\centering   
+    \includegraphics[width=1\linewidth]{Width_Depth.jpg}
+    \caption{Width and Depth}
+\end{subfigure}
+\caption{Ablation Experiments}
+\end{figure}
+
+
+
+
 
 Next, we highlight the
 
 
 
 \subsection{Qualitative Analysis}
+\label{sec_qua}
+\begin{figure}
+\centering
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_ours.jpg}
 
-%
-Ask Sho-kun.
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_abme.jpg}
+
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_film.jpg}
+
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_adacof.jpg}
+
+\end{subfigure}
+
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_ours.jpg}
+    \caption{Ours}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_abme.jpg}
+    \caption{ABME}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_film.jpg}
+    \caption{FILM}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_adacof.jpg}
+    \caption{Adacof}
+\end{subfigure}
+
+
+
+
+
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_bmbc.jpg}
+    %\caption{Adacof}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_rrin.jpg}
+    %\caption{Adacof}
+
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_super.jpg}
+    %\caption{Adacof}
+\end{subfigure}
+
+
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_bmbc.jpg}
+    \caption{BMBC}
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_rrin.jpg}
+    \caption{RRIN}
+
+\end{subfigure}%
+\begin{subfigure}{0.25\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_super.jpg}
+    \caption{Super-SloMo}
+\end{subfigure}
+\caption{Small Motion Video Qualitative Analysis}
+
+
+\end{figure}
+\begin{figure}
+\centering
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_I0.jpg}
+    %\caption{$I_0$}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_out.jpg}
+    %\caption{$\hat{I}_0.5$}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_I1.jpg}
+    %\caption{$I_1$}
+\end{subfigure}
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_I0.jpg}
+    \caption{$I_0$}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_out.jpg}
+    \caption{$\hat{I}_0.5$}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_I1.jpg}
+    \caption{$I_1$}
+\end{subfigure}%
+
+
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_error.png}
+    %\caption{Residual Error}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_GT.jpg}
+    %\caption{$I_{0.5}$}
+\end{subfigure}
+
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_error.png}
+    \caption{Residual Error}
+\end{subfigure}%
+\begin{subfigure}{0.33\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_GT.jpg}
+    \caption{$I_{0.5}$}
+\end{subfigure}
+\caption{Large Motion Video Qualitative Analysis}
+\end{figure}
+
 
 \subsection{Video fitting}
+\label{sec_video_fit}
+\begin{figure}[t]
+\centering
+\includegraphics[width=1\textwidth]{compression.png}
+\caption{Our proposed optical flow regularization loss can help the lightweight SIREN model to fit the video better.}
+\end{figure}
 
 
+\begin{figure}
+\centering
+\begin{subfigure}{1\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{out_frames.jpg}
+    \caption{Output RGB}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{out_lobs.jpg}
+    \caption{$L_{obs}$}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{out_lof.jpg}
+    \caption{$L_{of}$}
+\end{subfigure}
+\begin{subfigure}{1\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{lobs_lof.jpg}
+    \caption{Correlation of $L_{obs}$ and $L_{of}$}
+\end{subfigure}
+\caption{Figures from left to right are: Output Observed Frame $I_0$, Output Interpolated Frame $I_{0.5}$, Output Observed Frame $I_1$}
+\end{figure}
 
 \section{Limitations}
 

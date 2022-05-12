@@ -489,7 +489,7 @@ The baseline experiment is set up with a learning rate of 1e-5, 5000 epochs, and
 The order of our hyperparameter search is the lambda controlling the loss balance $\lambda$, the learning rate, epochs, omega, and the depth and width of SIREN.
 For each new hyperparameter searching, the best combination of previous hyperparameters is used.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.3\textwidth}
 	\centering
@@ -508,12 +508,12 @@ For each new hyperparameter searching, the best combination of previous hyperpar
 \end{subfigure}
 
 \begin{subfigure}{0.3\textwidth}
-\centering    
+\centering
     \includegraphics[width=1\linewidth]{omega.jpg}
     \caption{$\omega$}
 \end{subfigure}%
 \begin{subfigure}{0.3\textwidth}
-\centering   
+\centering
 
 \includegraphics[width=1\linewidth]{Width_Depth.jpg}
     \caption{Width and Depth}
@@ -525,22 +525,22 @@ For each new hyperparameter searching, the best combination of previous hyperpar
 
 \subsection{Qualitative analysis}
 \label{sec_qua}
-\begin{figure}
+
+Do qualitative analysis
+
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_ours.jpg}
-
 \end{subfigure}%
 \begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_abme.jpg}
-
 \end{subfigure}%
 \begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_film.jpg}
-
 \end{subfigure}%
 \begin{subfigure}{0.125\textwidth}
 	\centering
@@ -561,8 +561,6 @@ For each new hyperparameter searching, the best combination of previous hyperpar
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_super.jpg}
     %\caption{Adacof}
 \end{subfigure}
-
-
 \begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_ours.jpg}
@@ -592,7 +590,6 @@ For each new hyperparameter searching, the best combination of previous hyperpar
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_rrin.jpg}
     \caption{RRIN}
-
 \end{subfigure}%
 \begin{subfigure}{0.125\textwidth}
 	\centering
@@ -603,7 +600,10 @@ For each new hyperparameter searching, the best combination of previous hyperpar
 \end{figure}
 
 
-\begin{figure}
+
+
+
+\begin{figure}[h]
 \centering
 \begin{subfigure}{0.2\textwidth}
 	\centering
@@ -630,9 +630,6 @@ For each new hyperparameter searching, the best combination of previous hyperpar
     \includegraphics[width=1\linewidth]{nd_scene/Balloon1_error.png}
     %\caption{Residual Error}
 \end{subfigure}
-
-
-
 \begin{subfigure}{0.2\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{nd_scene/Skating_I0.jpg}
@@ -658,45 +655,21 @@ For each new hyperparameter searching, the best combination of previous hyperpar
     \includegraphics[width=1\linewidth]{nd_scene/Skating_error.png}
     \caption{Residual Error}
 \end{subfigure}
-
 \caption{Large Motion Video Qualitative Analysis}
 \end{figure}
 
 
 \subsection{Video fitting}
-\label{sec_video_fit}
 
-\begin{figure}[t]
+Fit video.
+
+\label{sec_video_fit}
+\begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{compression.png}
 \caption{Our proposed optical flow regularization loss can help the lightweight SIREN model to fit the video better.}
 \end{figure}
 
-
-\begin{figure}
-\centering
-\begin{subfigure}{0.5\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{out_frames.jpg}
-    \caption{Output RGB}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{out_lobs.jpg}
-    \caption{$L_{obs}$}
-\end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{out_lof.jpg}
-    \caption{$L_{of}$}
-\end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{lobs_lof.jpg}
-    \caption{Correlation of $L_{obs}$ and $L_{of}$}
-\end{subfigure}
-\caption{Figures from left to right are: Output Observed Frame $I_0$, Output Interpolated Frame $I_{0.5}$, Output Observed Frame $I_1$}
-\end{figure}
 
 \section{Limitations}
 

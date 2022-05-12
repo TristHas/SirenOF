@@ -391,9 +391,12 @@ We discuss this limitation in Section XXX.
 Following previous works, we use the Adobe[CITE], X4K[CITE] and ND Scene[CITE] dataset as benchmarks to compare to the state-of-the-art.
 We run all additional experiments on the 720p240fps1.mov video of Adobe dataset illustrated in Figure \ref{fig_w_wo_OF}.
 Due to the time-consuming operation of optimizing SIREN representations, we optimize and evaluate all models on a 240$\times$360 resolution.
+For each video in the Adobe dataset, we selected only the first 40 frames for our experiments.
 For the Adobe dataset, we used the same dataset splitting approach as Super-SloMo, where eight videos were used as the testing set.
 
-Unless specified other-wise, all experiments are run with a SIREN of depth 6 and width 720.
+We show the effect of different hyperparameters on the model in Figure \ref{fig_abl}.
+We use the greedy algorithm to find the best combination of hyperparameters.
+We will end up using a SIREN model with 6 depth and 720 width.
 We use an omega of 25 and a lambda of 0.12.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of 3.6e-5 during 15k epochs.
 
@@ -478,34 +481,45 @@ to bridging the gap performance on large motion datasets.
 \subsection{Ablation study}
 \label{sec_abl}
 
+
+We describe in this section the method of searching for the best hyperparameter combination using the greedy algorithm.
+Figure 4 illustrates the results of the hyperparameter searching.
+We will start with a SIREN model of depth 9 and width 512.
+The baseline experiment is set up with a learning rate of 1e-5, 5000 epochs, and 30 $\omega$ .
+The order of our hyperparameter search is the lambda controlling the loss balance $\lambda$, the learning rate, epochs, omega, and the depth and width of SIREN.
+For each new hyperparameter searching, the best combination of previous hyperparameters is used.
+
 \begin{figure}
 \centering
-\begin{subfigure}{1\textwidth}
-	\centering
-    \includegraphics[width=0.6\linewidth]{Epochs.jpg}
-    \caption{Epochs}
-\end{subfigure}
-\begin{subfigure}{0.6\textwidth}
+\begin{subfigure}{0.3\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{lambda.jpg}
-	\caption{$\lambda$}
+	\caption{Loss balance $\lambda$}
 \end{subfigure}%
-\begin{subfigure}{0.6\textwidth}
+\begin{subfigure}{0.27\textwidth}
 \centering
     \includegraphics[width=1\linewidth]{LR.jpg}
 	\caption{Learning Rate}
+\end{subfigure}%
+\begin{subfigure}{0.31\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{Epochs.jpg}
+    \caption{Epochs}
 \end{subfigure}
-\begin{subfigure}{0.5\textwidth}
-\centering
+
+\begin{subfigure}{0.3\textwidth}
+\centering    
     \includegraphics[width=1\linewidth]{omega.jpg}
     \caption{$\omega$}
 \end{subfigure}%
-\begin{subfigure}{0.6\textwidth}
-\centering
-    \includegraphics[width=1\linewidth]{Width_Depth.jpg}
+\begin{subfigure}{0.3\textwidth}
+\centering   
+
+\includegraphics[width=1\linewidth]{Width_Depth.jpg}
     \caption{Width and Depth}
 \end{subfigure}
-\caption{Ablation Experiments}
+\caption{Hyperparameter Searching and Ablation Experiments.}
+\label{fig_abl}
 \end{figure}
 
 
@@ -513,145 +527,138 @@ to bridging the gap performance on large motion datasets.
 \label{sec_qua}
 \begin{figure}
 \centering
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_ours.jpg}
 
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_abme.jpg}
 
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_film.jpg}
 
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_adacof.jpg}
-
-\end{subfigure}
-
-\begin{subfigure}{0.25\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_ours.jpg}
-    \caption{Ours}
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_abme.jpg}
-    \caption{ABME}
-\end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_film.jpg}
-    \caption{FILM}
-\end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_adacof.jpg}
-    \caption{Adacof}
-\end{subfigure}
-
-
-
-
-
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_bmbc.jpg}
     %\caption{Adacof}
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_rrin.jpg}
     %\caption{Adacof}
-
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_super.jpg}
     %\caption{Adacof}
 \end{subfigure}
 
 
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_ours.jpg}
+    \caption{Ours}
+\end{subfigure}%
+\begin{subfigure}{0.125\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_abme.jpg}
+    \caption{ABME}
+\end{subfigure}%
+\begin{subfigure}{0.125\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_film.jpg}
+    \caption{FILM}
+\end{subfigure}%
+\begin{subfigure}{0.125\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_adacof.jpg}
+    \caption{AdaCof}
+\end{subfigure}%
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_bmbc.jpg}
     \caption{BMBC}
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_rrin.jpg}
     \caption{RRIN}
 
 \end{subfigure}%
-\begin{subfigure}{0.25\textwidth}
+\begin{subfigure}{0.125\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_super.jpg}
-    \caption{Super-SloMo}
+    \caption{SloMo}
 \end{subfigure}
-\caption{Small Motion Video Qualitative Analysis}
-
-
+\caption{Small Motion Video Qualitative Analysis. The interpolated frame results and the residual heat map of the two videos are shown. Our proposed method can fit high frequency details well (e.g., grass), but fits low frequency information poorly (e.g., sky). The BMBC and RRIN lose the pixels at the edges.}
 \end{figure}
+
+
 \begin{figure}
 \centering
-\begin{subfigure}{0.33\textwidth}
+\begin{subfigure}{0.2\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{nd_scene/Balloon1_I0.jpg}
     %\caption{$I_0$}
 \end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
+\begin{subfigure}{0.2\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{nd_scene/Balloon1_out.jpg}
     %\caption{$\hat{I}_0.5$}
 \end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_I1.jpg}
-    %\caption{$I_1$}
-\end{subfigure}
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Skating_I0.jpg}
-    \caption{$I_0$}
-\end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Skating_out.jpg}
-    \caption{$\hat{I}_0.5$}
-\end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Skating_I1.jpg}
-    \caption{$I_1$}
-\end{subfigure}%
-
-
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_error.png}
-    %\caption{Residual Error}
-\end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
+\begin{subfigure}{0.2\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{nd_scene/Balloon1_GT.jpg}
     %\caption{$I_{0.5}$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_I1.jpg}
+    %\caption{$I_1$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Balloon1_error.png}
+    %\caption{Residual Error}
 \end{subfigure}
 
-\begin{subfigure}{0.33\textwidth}
+
+
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_I0.jpg}
+    \caption{$v(x,y,0)$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_out.jpg}
+    \caption{$\hat{v}(x,y,0.5)$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_GT.jpg}
+    \caption{$v(x,y,0.5)$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
+	\centering
+    \includegraphics[width=1\linewidth]{nd_scene/Skating_I1.jpg}
+    \caption{$v(x,y,1)$}
+\end{subfigure}%
+\begin{subfigure}{0.2\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{nd_scene/Skating_error.png}
     \caption{Residual Error}
-\end{subfigure}%
-\begin{subfigure}{0.33\textwidth}
-	\centering
-    \includegraphics[width=1\linewidth]{nd_scene/Skating_GT.jpg}
-    \caption{$I_{0.5}$}
 \end{subfigure}
+
 \caption{Large Motion Video Qualitative Analysis}
 \end{figure}
 
@@ -668,22 +675,22 @@ to bridging the gap performance on large motion datasets.
 
 \begin{figure}
 \centering
-\begin{subfigure}{1\textwidth}
+\begin{subfigure}{0.5\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{out_frames.jpg}
     \caption{Output RGB}
-\end{subfigure}
-\begin{subfigure}{1\textwidth}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{out_lobs.jpg}
     \caption{$L_{obs}$}
 \end{subfigure}
-\begin{subfigure}{1\textwidth}
+\begin{subfigure}{0.5\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{out_lof.jpg}
     \caption{$L_{of}$}
-\end{subfigure}
-\begin{subfigure}{1\textwidth}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{lobs_lof.jpg}
     \caption{Correlation of $L_{obs}$ and $L_{of}$}

@@ -153,21 +153,23 @@ generalization of state-of-the-art models to video frame interpolation in the wi
 %- Depth provides more representational power.
 %- Architecture provides inductive bias,
 In the mean time, research on implicit representations seek better discrete representations of continuous signals.
-In recent years Neural Implicit Representations (NIR), i.e. representing signals as Neural Networks (NN) have offered valuable
-alternative as representations for a variety of signals [CITE].
-Of particular interest to us is the work of SIREN [CITE], in which it has been shown that representing
+In recent years Neural Implicit Representations (NIR), i.e. representing signals as Neural Networks (NN)
+have been shown to offer several competitive advantages over explicit representations,
+with notable early successes for 3D shape representations [CITE].
+Of particular interest to us is the work of SIREN [CITE],
+in which it has been shown that representing
 signals using Multi Layer Perceptrons (MLP) with sine activation functions
-allowed for meaningful representations of the signal derivatives.
+carry meaningful representations of the signal derivatives.
 Inspired by this work, we question wether such approach may be used to guide the interpolation
-process of VFI by applying the OF on the exact representation derivatives,
+process of VFI by controlling the exact derivatives of the signal rather than finite differences,
 thus avoiding the discretization pitfalls of traditional approaches.
-We do so by regularizing the derivatives of SIREN representations of videos to satisfy the optical flow constraint,
-i.e., to be orthogonal to their optical flow
+We do so by constraining the derivatives of SIREN representations to satisfy the optical flow constraint,
+i.e., to be orthogonal to the video's optical flow
 (which we compute using existing state-of-the-art OF models).
-We find that this approach outperforms most existing machine learning-based approaches on small motion range benchmarks,
-without relying on machine learning to learn the interpolation:
-we simply regularize the implicit representation using the definition
-of the optical flow and the optical flow constraint equation.
+We find that this approach outperforms most existing
+machine learning-based approaches on small motion range benchmarks,
+without relying on machine learning for the interpolation operator:
+we simply regularize the implicit representation to satisfy the definition of the optical flow.
 In this sense, our approaches is most similar to classical VIF approaches,
 except that instead of wrapping the OF on discrete explicit frame representations,
 we apply the optical flow constraint on the exact gradient of the the NIR.
@@ -219,7 +221,6 @@ Optical flow-based approaches are the most popular in video frame interpolation.
 The standard technique of video frame interpolation aims at explicitly estimating motion in the form of optical flow, warping two input frames to an intermediate frame, and synthesizing the occlusion region. The frames are constrained by the assumption of linear motion and constant luminance between them.
 However, video interpolation of video frames is heavily dependent on the accuracy of optical flow.
 
-
 The Super-SloMo \cite{jiang2018super} proposed by Jiang et,al. is a non-negligible work in the task of optical flow-based video frame interpolation.
 Super-SloMo extends the U-Net architecture proposed by Liu et al \cite{liu2017video}.
 The bilateral optical flow is calculated for the input two frames and approximates the key frame with the intermediate optical flow of the two frames.
@@ -265,7 +266,7 @@ It requires visual features of the video and does not fully map the pixel coordi
 \section{Method}
 
 % We fit a video, and test on the middle frames
-We consider a ground-truth videos as a continuous signal $v$ mapping continuous spatial ($x$, $y$) and temporal ($t$) coordinates to RGB values:
+We consider a ground-truth video as a continuous signal $v$ mapping continuous spatial ($x$, $y$) and temporal ($t$) coordinates to RGB values:
 
 \begin{equation}
 \begin{aligned}
@@ -291,14 +292,15 @@ To do so, we only have access to regularly sampled observation of the signal $v$
 \begin{equation}
 \begin{aligned}
 &\mathcal{V} \in  \: \mathbb{R}^{T \times H \times W \times 3} \\
-s.t. \: &\mathcal{V}_{xyt} =   v(x, y, t) \: \forall (x, y, t) \in \mathbb{N}^3
+s.t. \: &\mathcal{V}_{xyt} =   v(x, y, t) %\: , \forall (x, y, t) \in \mathbb{N}^3
 \end{aligned}
 \end{equation}
 
 % We start by showing that fitting a video does not naturally interpolate.
-Following previous work on NIR (cite), we use the SIREN model (MLP with sine activation functions),
-The most straightforward way to solve Equation XXX is to optimize over the model parameters to fit the observations,
-using the following loss function
+where $T$ represents the number of frames in the video, and $H \times W$ the spatial resolution.
+We use SIREN as parameterized function class $f_{\theta}$.
+The most straightforward way to approximate Equation 2 is to optimize the model parameters so as to fit the video frames,
+using the following loss function we refer to as the observation loss:
 
 \begin{equation}
 \mathcal{L}_{obs} = \frac{1}{HWT} \sum_{x=1}^W\sum_{y=1}^H\sum_{t=1}^T || f_{\theta}(x,y,t) - \mathcal{V}_{xyt} ||^2
@@ -324,17 +326,24 @@ In particular, we regularize the model so as to respect the optical flow constra
 %$or as a useful tool for video compression.
 %The optical flow loss we use is defined as follows:
 
-The optical flow represents the movement of brightness patterns in videos.
-For a given coordinate $(x,y,t)$ in a video signal $v$, the optical is defined as the motion of this coordinate's brightness,
 The optical flow constraint equation states that for an infinitesimal lapse of time $\delta t$,
-the brightness of a physical point perceived by the camera should remain constant.
+the brightness of physical points perceived by a camera at arbitrary coordinates $(x,y,t)$ should remain constant.
 In other words, given the displacement $(\delta x, \delta y)$ of a physical point in the image coordinate system,
-the image brightness $v$ should remain constant.
-This relationship is exact in the infinitesimal limit, as  $\delta t$ tends to zero, we have:
+the image brightness $v$ should remain constant:
+\begin{equation}
+v(x, y, t)=v(x + \delta x, y + \delta y, t + \delta t)
+\end{equation}
+
+Expressing movement as a ratio of displacement in time and abbreviating coordinates as $x=(x,y,t)$,
+we can write the optical flow $F$ and the above constraint as:
 
 \begin{equation}
-v(x, y, t)=(x + \delta x, y + \delta y, t + \delta t)
+\begin{aligned}
+F(x)=(\frac{\delta x}{\delta t}, \frac{\delta y}{\delta t}, 1) \\
+v(x)=v(x + F(x))
+\end{aligned}
 \end{equation}
+
 
 We leverage this optical flow constraint equation to regularize the NIR.
 Denoting the derivatives of the video signal as:
@@ -345,9 +354,6 @@ D(f, \theta, x, y, t)=\Big(\frac{\delta f_{\theta}(x,y,t)}{\delta x}, \frac{\del
 
 And the optical flow as:
 
-\begin{equation}
-F(x, y, t)=(u(x,y,t), v(x,y,t), 1)
-\end{equation}
 
 we can now define the optical flow regularization loss
 
@@ -365,10 +371,12 @@ The total loss we use to optimize the NIR is a weighted sum of these two terms:
 \end{equation}
 
 where $\lambda$ is a hyperparameter taking values between 0 and 1 whose impact we investigate in the following section.
-The exactitude of the optical flow constraint plays in our favor:
-As we regularize the true derivative of the signal representation, we do not assume constant derivatives of the signal on any interval.
-On the other hand, the optical flow we used was computed from discrete consecutive frames,
-and thus does not represent the true infinitesimal motion range.
+The exactitude of the optical flow constraint at the infinitesimal scale plays in our favor:
+As we regularize the true derivative of the signal representation,
+we do not assume constant derivatives of the signal on any interval.
+We believe this is the main factor behind our positive results.
+On the other hand, the optical flow we used was estimated from discrete consecutive frames,
+and thus does not represent the true infinitesimal motion field but an estimation of finite differences.
 We discuss this limitation in Section XXX.
 
 \section{Experiments}
@@ -395,12 +403,14 @@ We show that our proposed optical flow regularization loss can help the lightwei
 This indicates that our method is potentially helpful for video compression.
 
 \subsection{Optical Flow constaint and High Frequencies}
-\label{sec_of_hf}
-Figure 2 illustrates the fact that applying the optical flow constraint smoothes the high-frequency variations of vanilla SIREN representation.
-We start by questioning wether the OF constraint does more than simply constraining the high frequency variations of the representation.
+
+Figure \label{sec_of_hf} illustrates the fact that applying the optical flow constraint smoothes out the high-frequency variations
+from the intermediate frames of vanilla SIREN representations.
+We start by questioning wether the OF constraint does more than simply removing the high frequency variations of the representation.
 To do so, we compare the results of vanilla SIREN representations geared towards different frequency and compare the
 best obtained results to OF-constrained representations.
-We constrain the SIREN frequency by varying their $\omega$ parameter, and report our comparison in Figure XXX.
+We constrain the SIREN frequency by varying their $\omega$ parameter,
+and report our comparison in Figure XXX.
 
 \begin{figure}[t]
 \centering
@@ -419,32 +429,33 @@ We show that
 
 
 \begin{table}[]
-\caption{XXX}
+\centering
+\caption{Quantitative comparison to state-of-the-art VFI on limited motion range benchmarks. Results are formatted as PSNR / SSMI.}
 \begin{tabular}{l | l | l }
  &  Adobe-240FPS  [XXX] &  X4K [XXX]  \\
 \hline
 Super-SloMo [XXX] &  27.77/0.8866 & 27.38/0.8527  \\
-RRIN [XXX]  & 32.37/0.9624 & 30.70/0.9270  \\
-BMBC [XXX]  & 27.83/0.9172 & 27.42/0.8585   \\
-AdaCof [XXX] & 35.50/0.9684 & 34.61/0.9218 \\
-ABME   [XXX] & 35.28/0.9669 & 34.30/0.9195 \\
-FILM   [XXX] &	35.97/0.9710 & 35.14/0.9397 \\
-Ours	& 36.52/0.9770 & 35.06/0.9441 \\
+RRIN [XXX]  & 32.37 / 0.9624 & 30.70 / 0.9270  \\
+BMBC [XXX]  & 27.83 / 0.9172 & 27.42 / 0.8585   \\
+AdaCof [XXX] & 35.50 / 0.9684 & 34.61 / 0.9218 \\
+ABME   [XXX] & 35.28 / 0.9669 & 34.30 / 0.9195 \\
+FILM   [XXX] &	35.97 / 0.9710 & \textbf{35.14} / 0.9397 \\
+Ours	& \textbf{36.52} / \textbf{0.9770} & 35.06/ \textbf{0.9441} \\
 \end{tabular}
-
 \end{table}
 
 
 
 \begin{table}[]
-\caption{XXX}
+\centering
+\caption{Quantitative comparison to state-of-the-art VFI on large motion range benchmarks. Results are formatted as PSNR / SSMI.}
 \begin{tabular}{l | l }
-	    &   ND Scene [9] \\
+	    &   ND Scene [XXX] \\
 \hline
-V-NF        &  23.30/0.7260\\
-NSFF [10]   & 28.03/0.9250\\
-CURE [11]   & 36.91/0.9843\\
-Ours	    &  29.22/0.9215
+V-NF        &  23.30 / 0.7260 \\
+NSFF [10]   & 28.03 / 0.9250 \\
+CURE [11]   & \textbf{36.91} / \textbf{0.9843} \\
+Ours	      & 29.22 / 0.9215
 \end{tabular}
 
 \end{table}

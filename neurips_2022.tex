@@ -211,6 +211,13 @@ We briefly present some related work in Section XXX, the detail of our method in
 and design several experiments to highlight the advantages of our approach in Section XXX.
 
 \section{Related Work}
+\textbf{Classical video interpolation.}
+The classical approach relies on optical flow to characterize the motion relationship between two frames.
+The quality of interpolation depends on the accuracy of the optical flow.
+Classical optical flow is usually sparse and can only work at one pixel or sub-pixel level of motion \cite{chen2012real}.
+Sparse feature extraction \cite{liu2008sift} is used to enhance the optical flow correctly.
+In order to synthesize dense optical flow and work on large displacements, \cite{weinzaepfel2013deepflow} uses sparse convolution and max-pooling.
+But instead of learning the model, the parameters are set manually.
 
 \textbf{Deep learning video interpolation.}
 A number of deep learning models have been developed for video interpolation tasks.
@@ -258,7 +265,7 @@ In other words, this makes it possible to output infinite frames of video using 
 Although NeRV briefly attempts the task of performing video frame interpolation, this is not NeRV's main work.
 The NRFF \cite{rho2022neural} proposed by Rho et al., which uses optical flow and residuals information for video compression, does not directly fit all frames.
 
-Most related to our approach is the concurrent work by XX et al. \cite{shangguan2022learning}, which also uses INR for video interpolation tasks.
+Most related to our approach is the concurrent work by Shangguan et al. \cite{shangguan2022learning}, which also uses INR for video interpolation tasks.
 Their approach, CURE, uses machine learning.
 It requires visual features of the video and does not fully map the pixel coordinates and frame positions of the video to RGB images.
 
@@ -530,68 +537,68 @@ Do qualitative analysis
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_ours.jpg}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_abme.jpg}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_film.jpg}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_adacof.jpg}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_bmbc.jpg}
     %\caption{Adacof}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_rrin.jpg}
     %\caption{Adacof}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/720p_240fps_1_super.jpg}
     %\caption{Adacof}
 \end{subfigure}
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_ours.jpg}
     \caption{Ours}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_abme.jpg}
     \caption{ABME}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_film.jpg}
     \caption{FILM}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_adacof.jpg}
     \caption{AdaCof}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_bmbc.jpg}
     \caption{BMBC}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_rrin.jpg}
     \caption{RRIN}
 \end{subfigure}%
-\begin{subfigure}{0.125\textwidth}
+\begin{subfigure}{0.14\textwidth}
 	\centering
     \includegraphics[width=1\linewidth]{qua_imgs/TEST02_045_f0465_super.jpg}
     \caption{SloMo}
@@ -710,29 +717,7 @@ previous section.
 Nevertheless, these limitations can be tackled and we hope the insights presented in this paper can serve prove useful in the future,
 either on their own or combined with related approaches.
 
-\section*{References}
-
-\medskip
-
-{
-\small
-
-
-[1] Alexander, J.A.\ \& Mozer, M.C.\ (1995) Template-based algorithms for
-connectionist rule extraction. In G.\ Tesauro, D.S.\ Touretzky and T.K.\ Leen
-(eds.), {\it Advances in Neural Information Processing Systems 7},
-pp.\ 609--616. Cambridge, MA: MIT Press.
-
-
-[2] Bower, J.M.\ \& Beeman, D.\ (1995) {\it The Book of GENESIS: Exploring
-  Realistic Neural Models with the GEneral NEural SImulation System.}  New York:
-TELOS/Springer--Verlag.
-
-
-[3] Hasselmo, M.E., Schnell, E.\ \& Barkai, E.\ (1995) Dynamics of learning and
-recall at excitatory recurrent synapses and cholinergic modulation in rat
-hippocampal region CA3. {\it Journal of Neuroscience} {\bf 15}(7):5249-5262.
-}
-
+\bibliographystyle{unsrt}  
+\bibliography{references}  
 
 \end{document}

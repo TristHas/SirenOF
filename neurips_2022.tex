@@ -96,7 +96,7 @@ which suggests potential applications to INR optimization and video compression.
 \section{Introduction}
 
 % First paragraph general about the idea of using INR to represent signals. [One paragraph, 4]
-%% Many signal processing concepts defined in continuous spaces, but signal representation intrinsically discrete in digital computers
+%% Many signal processing concepts defined in continuous spaces, but signal representation intrinsically discrete in computers
 %% There is a problem with this:
 %% In order to apply the infinitesimal quantities defined by theory to discrete sampled representations,
 % unrealistic assumptions often have to be explicitly made, and rough heuristics employed.
@@ -107,9 +107,9 @@ surfaces are continuous manifolds in space,
 motion is a rate of change in space through time, etc.
 In contrast, the modern digital infrastructure is inherently discrete:
 digital sensors capture discrete observations of the world sampled in time and space;
-digital computers store and process discrete representations of signals.
+computers store and process discrete representations of signals.
 In order to model continuous notions on discrete signal representations,
-classical signal processing approaches have resorted to a variety of heuristics and assumptions,
+classical works have proposed different simplifying assumptions,
 often taking the form of constant first or second derivatives of the signal between consecutive observations.
 The lack of generality of any such handcrafted heuristics,
 combined with the ever improving quantitative results of Machine Learning (ML) approaches,
@@ -126,15 +126,16 @@ to guide the interpolation of pixel intensities from the pixel grid of observed 
 Classical approaches formulate assumptions such as constant movement or acceleration fields between consecutive frames [CITE].
 The value of each pixel in the inferred intermediate frame is computed by first shifting the pixel intensities of the observed frames following the
 optical flow directions, and then interpolating the shifted pixel intensities onto the intermediate frame's pixel grid.
-These approaches suffer from the following two limitations:
+These approaches suffer from the following two main limitations:
 
 \begin{itemize}
 \item The optical flow is prone to errors due to obstructions and illumination variations unrelated to the motion field.
-\item Assumptions of constant first or second derivatives of the signal do not necessarily hold in practice.
+\item Assumptions of constant first or second derivatives of the signal do not necessarily hold true in practice.
 \end{itemize}
 
 These limitations share a common root cause: discretization.
-Indeed, both the optical flow constraint and assumptions on the motion field only truly hold at the infinitesimal scale,
+Indeed, both the optical flow constraint equation from which is derived the optical flow
+and assumptions of constant motion field only truly hold at the infinitesimal scale,
 for time deltas typically much smaller than that of practically used Frames Per Second (FPS).
 
 ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections,
@@ -142,7 +143,7 @@ without explicitly formulating any assumption on the signal.
 While these approaches have achieved great success in terms of benchmark performance,
 they are prone to generalization errors due to domain shifts. % Check me
 Indeed differences between the training set distribution (i.e. VFI benchmark videos) and the target video distribution hinders the performance of ML approaches:
-differences in the range of motion, exposure time and frame-per-second have been shown to limit the
+differences in the range of motion, exposure time and FPS have been shown to limit the
 generalization of state-of-the-art models to video frame interpolation in the wild [CITE]. %check me
 
 % Implicit Neural Representation
@@ -406,7 +407,7 @@ Unless specified otherwise, we use the following default parameters:
 
 SIREN models with depth 9, width 512 and an $\omega$ of 30.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of $10^{-5}$ during 5000 epochs.
-We uses $\lambda = 0.12$ for the loss function.
+We uses $\lambda = 0.12$ for the loss function. We compute the optical flow of videos in original resolution using the GMA [CITE] OF model.
 
 We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in section \ref{sec_of_hf}.
 We show that limiting the frequency fitted improves interpolation at the cost of degrading the fit of observed frames,

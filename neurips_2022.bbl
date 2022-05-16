@@ -1,0 +1,150 @@
+\begin{thebibliography}{10}
+
+\bibitem{chen2021nerv}
+H.~Chen, B.~He, H.~Wang, Y.~Ren, S.~N. Lim, and A.~Shrivastava.
+\newblock Nerv: Neural representations for videos.
+\newblock {\em Advances in Neural Information Processing Systems}, 34, 2021.
+
+\bibitem{chen2012real}
+L.~Chen, H.~Yang, T.~Takaki, and I.~Ishii.
+\newblock Real-time optical flow estimation using multiple frame-straddling
+  intervals.
+\newblock {\em Journal of Robotics and Mechatronics}, 24(4):686--698, 2012.
+
+\bibitem{cheng2021multiple}
+X.~Cheng and Z.~Chen.
+\newblock Multiple video frame interpolation via enhanced deformable separable
+  convolution.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  2021.
+
+\bibitem{dupont2021coin}
+E.~Dupont, A.~Goli{\'n}ski, M.~Alizadeh, Y.~W. Teh, and A.~Doucet.
+\newblock Coin: Compression with implicit neural representations.
+\newblock {\em arXiv preprint arXiv:2103.03123}, 2021.
+
+\bibitem{dupont2022coin++}
+E.~Dupont, H.~Loya, M.~Alizadeh, A.~Goli{\'n}ski, Y.~W. Teh, and A.~Doucet.
+\newblock Coin++: Data agnostic neural compression.
+\newblock {\em arXiv preprint arXiv:2201.12904}, 2022.
+
+\bibitem{jiang2018super}
+H.~Jiang, D.~Sun, V.~Jampani, M.-H. Yang, E.~Learned-Miller, and J.~Kautz.
+\newblock Super slomo: High quality estimation of multiple intermediate frames
+  for video interpolation.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 9000--9008, 2018.
+
+\bibitem{lee2020adacof}
+H.~Lee, T.~Kim, T.-y. Chung, D.~Pak, Y.~Ban, and S.~Lee.
+\newblock Adacof: Adaptive collaboration of flows for video frame
+  interpolation.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition}, pages 5316--5325, 2020.
+
+\bibitem{li2020video}
+H.~Li, Y.~Yuan, and Q.~Wang.
+\newblock Video frame interpolation via residue refinement.
+\newblock In {\em ICASSP 2020-2020 IEEE International Conference on Acoustics,
+  Speech and Signal Processing (ICASSP)}, pages 2613--2617. IEEE, 2020.
+
+\bibitem{li2021neural}
+Z.~Li, S.~Niklaus, N.~Snavely, and O.~Wang.
+\newblock Neural scene flow fields for space-time view synthesis of dynamic
+  scenes.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition}, pages 6498--6508, 2021.
+
+\bibitem{liu2008sift}
+C.~Liu, J.~Yuen, A.~Torralba, J.~Sivic, and W.~T. Freeman.
+\newblock Sift flow: Dense correspondence across different scenes.
+\newblock In {\em European conference on computer vision}, pages 28--42.
+  Springer, 2008.
+
+\bibitem{liu2017video}
+Z.~Liu, R.~A. Yeh, X.~Tang, Y.~Liu, and A.~Agarwala.
+\newblock Video frame synthesis using deep voxel flow.
+\newblock In {\em Proceedings of the IEEE International Conference on Computer
+  Vision}, pages 4463--4471, 2017.
+
+\bibitem{mildenhall2020nerf}
+B.~Mildenhall, P.~P. Srinivasan, M.~Tancik, J.~T. Barron, R.~Ramamoorthi, and
+  R.~Ng.
+\newblock Nerf: Representing scenes as neural radiance fields for view
+  synthesis.
+\newblock In {\em European conference on computer vision}, pages 405--421.
+  Springer, 2020.
+
+\bibitem{niklaus2017video1}
+S.~Niklaus, L.~Mai, and F.~Liu.
+\newblock Video frame interpolation via adaptive convolution.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition}, pages 670--679, 2017.
+
+\bibitem{niklaus2017video2}
+S.~Niklaus, L.~Mai, and F.~Liu.
+\newblock Video frame interpolation via adaptive separable convolution.
+\newblock In {\em Proceedings of the IEEE International Conference on Computer
+  Vision}, pages 261--270, 2017.
+
+\bibitem{park2020bmbc}
+J.~Park, K.~Ko, C.~Lee, and C.-S. Kim.
+\newblock Bmbc: Bilateral motion estimation with bilateral cost volume for
+  video interpolation.
+\newblock In {\em European Conference on Computer Vision}, pages 109--125.
+  Springer, 2020.
+
+\bibitem{park2021asymmetric}
+J.~Park, C.~Lee, and C.-S. Kim.
+\newblock Asymmetric bilateral motion estimation for video frame interpolation.
+\newblock In {\em Proceedings of the IEEE/CVF International Conference on
+  Computer Vision}, pages 14539--14548, 2021.
+
+\bibitem{reda2022film}
+F.~Reda, J.~Kontkanen, E.~Tabellion, D.~Sun, C.~Pantofaru, and B.~Curless.
+\newblock Film: Frame interpolation for large motion.
+\newblock {\em arXiv preprint arXiv:2202.04901}, 2022.
+
+\bibitem{rho2022neural}
+D.~Rho, J.~Cho, J.~H. Ko, and E.~Park.
+\newblock Neural residual flow fields for efficient video representations.
+\newblock {\em arXiv preprint arXiv:2201.04329}, 2022.
+
+\bibitem{shangguan2022learning}
+W.~Shangguan, Y.~Sun, W.~Gan, and U.~S. Kamilov.
+\newblock Learning cross-video neural representations for high-quality frame
+  interpolation.
+\newblock {\em arXiv preprint arXiv:2203.00137}, 2022.
+
+\bibitem{sim2021xvfi}
+H.~Sim, J.~Oh, and M.~Kim.
+\newblock Xvfi: Extreme video frame interpolation.
+\newblock In {\em Proceedings of the IEEE/CVF International Conference on
+  Computer Vision}, pages 14489--14498, 2021.
+
+\bibitem{sitzmann2020implicit}
+V.~Sitzmann, J.~Martel, A.~Bergman, D.~Lindell, and G.~Wetzstein.
+\newblock Implicit neural representations with periodic activation functions.
+\newblock {\em Advances in Neural Information Processing Systems},
+  33:7462--7473, 2020.
+
+\bibitem{su2017deep}
+S.~Su, M.~Delbracio, J.~Wang, G.~Sapiro, W.~Heidrich, and O.~Wang.
+\newblock Deep video deblurring for hand-held cameras.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition}, pages 1279--1288, 2017.
+
+\bibitem{weinzaepfel2013deepflow}
+P.~Weinzaepfel, J.~Revaud, Z.~Harchaoui, and C.~Schmid.
+\newblock Deepflow: Large displacement optical flow with deep matching.
+\newblock In {\em Proceedings of the IEEE international conference on computer
+  vision}, pages 1385--1392, 2013.
+
+\bibitem{yoon2020novel}
+J.~S. Yoon, K.~Kim, O.~Gallo, H.~S. Park, and J.~Kautz.
+\newblock Novel view synthesis of dynamic scenes with globally coherent depths
+  from a monocular camera.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition}, pages 5336--5345, 2020.
+
+\end{thebibliography}

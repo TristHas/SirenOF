@@ -89,7 +89,7 @@ by explicitly constraining the derivatives of the INR to satisfy the optical flo
 We achieve state of the art video frame interpolation on limited motion ranges
 using only a target video and its optical flow, without learning the interpolation operator from additional training data.
 We further show that constraining the INR derivatives not only
-allows to interpolate intermediate frames but also improves the ability of narrow networks to fit observed frames,
+allows to interpolate intermediate frames but also improves the ability of narrow networks to fit the observed frames,
 which suggests potential applications to INR optimization and video compression.
 \end{abstract}
 
@@ -121,21 +121,21 @@ These approaches leverage large collections of data to infer statistical propert
 % Then a historical approach to frame interpolation and Optical flow.
 In computer vision, Video Frame Interpolation (VFI) is one task representative of such development.
 VFI models aim to interpolate intermediate frames between the consecutive frames of a video.
-To do so, most successful approaches rely on the optical flow as an approximation of the motion field
-to guide the interpolation of pixel intensities from the grid of two consecutive frames onto the pixel grid of intermediate frames.
-Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames [CITE].
-The value of each pixel in the inferred intermediate frame is computed by first shifting the pixel intesities of the observed frames following the
+To do so, most successful approaches rely on the optical flow
+to guide the interpolation of pixel intensities from the pixel grid of observed frames onto the pixel grid of intermediate frames.
+Classical approaches formulate assumptions such as constant speed or acceleration of the optical flow between consecutive frames [CITE].
+The value of each pixel in the inferred intermediate frame is computed by first shifting the pixel intensities of the observed frames following the
 optical flow directions, and then interpolating the shifted pixel intensities onto the intermediate frame's pixel grid.
 These approaches suffer from the following two limitations:
 
 \begin{itemize}
-\item Optical flow constraint used to infer the optical flow holds for limited situations. % Check me
-\item Linear interpolation of pixel intensities along the optical flow directions does not hold in practice. % Check me
+\item Optical flow is prone to errors due to obstructions and illumination variations unrelated to the motion field. % Check me
+\item Assumptions of constant first or second derivatives of the flow directions do not necessarily hold in practice. % Check me
 \end{itemize}
 
 These limitations share a common root cause: discretization.
-Indeed, both the optical flow constraint and the constant motion field assumption only truly hold at the infinitesimal scale,
-for much smaller time deltas than typical FPS used in practice.
+Indeed, both the optical flow constraint and assumptions on the motion field only truly hold at the infinitesimal scale,
+for time deltas typically much smaller than that of practically used Frames Per Second (FPS).
 
 ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections,
 without explicitly formulating any assumption on the optical flow.
@@ -678,46 +678,45 @@ Fit video.
 \end{figure}
 
 
-\section{Limitations}
+\section{Current limitations and future work}
 
-While we believe our results to be very encouraging, the proposed approach is not yet practical.
-Here, we discuss what we believe to be the three main limitations of, and possible solutions to, our approach
+While we believe our results to be very promising, the proposed approach in its current is not yet practical for general VFI.
+Here, we discuss what we believe to be the three main limitations of, and most impactful improvements to our approach.
 
 \textbf{Slow optimization process.} Fitting XXX frames of a video at XXX resolution currently takes XXX hours on a XXX GPU using Pytorch.
-This computation time is a huge draw back as it limits our ability to process full resolution video as well as
-to explore different hyper parameters and variants of the methods.
+This computation time is an important drawback as it limits our ability to process full resolution video,
+ as well as to explore different hyper parameters and variants of the methods within realistic times.
 We expect new methods speeding up the convergence of video INR to be very beneficial to this line of research.
-Given recent successes of INR approaches to high impact applications (i.e., video compression [CITE]),
-We hopefully expect to see advances in INR optimization research.
+Given recent successes of INR approaches to high impact applications (i.e., video compression [CITE], climate dataset compression [CITE]),
+we hopefully expect to see such development in INR optimization research.
 
 % Relying on optical flow model.
 \textbf{Reliance on trained optical flow model.}
 SIREN models allow us to apply the optical flow on the exact derivatives of the signal,
 bypassing the heuristics of classical approach without relying on machine learning.
 The optical flow we use, however, is given by a ML model trained on discrete representations, which raises two problems:
-it is subject to the same generalization errors as ML approaches,
-and is subject to finite difference errors, i.e. noisy illumination variations and occlusions.
+it is subject to generalization errors due to domain shifts,
+and is subject to finite difference errors such as occlusions.
 Future work will aim to bypass our reliance on ML-based OF using alternative constraints on the exact derivatives.
 
 \textbf{Inability to interpolate high motion range videos.}
 In its current form, we only apply the optical flow constraint on the observed frames of the video.
 This has proven sufficient to reach state-of-the art on low motion ranges but is not sufficient for large motions.
-A promising axis of improvement would be to apply further regularization on the interpolates frames (i.e for non-inter input times like $t=0.5$)).
-Possible regularization may include interpolated optical flows, or texture constraints as has been proposed in related works [COTE],
+A promising axis of improvement would be to apply further regularization to the interpolates frames (e.g. for intra-frame time indices $t=0.5$)).
+Possible regularization methods may include interpolated optical flows or texture similarity constraints as proposed in recent works [COTE],
 which may prevent the ghosting effects illustrated in Figure XXX.
 
 \section{Conclusion}
 
 In this paper, we have shown that regularizing INR using the optical flow constraint equation
-enabled VFI without relying on ML to perform the interpolation step.
+enables us to perform VFI without relying on ML to perform the interpolation step.
 We have shown that this approach is sufficient to reach state-of-the-art interpolation on low motion range videos,
 without resorting to learning-based interpolation.
-This method is not yet practical for high resolution large motion range videos due to the three limitations highlighted in the
-previous section.
+This method is not yet practical for high resolution large motion range videos due to the three limitations highlighted in the previous section.
 Nevertheless, these limitations can be tackled and we hope the insights presented in this paper can serve prove useful in the future,
 either on their own or combined with related approaches.
 
-\bibliographystyle{unsrt}  
-\bibliography{references}  
+\bibliographystyle{unsrt}
+\bibliography{references}
 
 \end{document}

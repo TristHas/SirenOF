@@ -123,7 +123,7 @@ In computer vision, Video Frame Interpolation (VFI) is one task representative o
 VFI models aim to interpolate intermediate frames between the consecutive frames of a video.
 To do so, most successful approaches rely on the optical flow as an approximation of the motion field
 to guide the interpolation of pixel intensities from the grid of two consecutive frames onto the pixel grid of intermediate frames.
-Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames [CITE].
+Classical approaches formulate assumptions such as constant speed or acceleration of the motion field between consecutive frames [SHO].
 The value of each pixel in the inferred intermediate frame is computed by first shifting the pixel intesities of the observed frames following the
 optical flow directions, and then interpolating the shifted pixel intensities onto the intermediate frame's pixel grid.
 These approaches suffer from the following two limitations:
@@ -137,13 +137,13 @@ These limitations share a common root cause: discretization.
 Indeed, both the optical flow constraint and the constant motion field assumption only truly hold at the infinitesimal scale,
 for much smaller time deltas than typical FPS used in practice.
 
-ML approaches [CITE] have instead proposed to learn the frame interpolation operator from large video collections,
+ML approaches [SHO] have instead proposed to learn the frame interpolation operator from large video collections,
 without explicitly formulating any assumption on the optical flow.
 While these approaches have achieved great success in terms of benchmark performance,
 they are prone to generalization errors when applied to unseen videos. % Check me
 Indeed differences between the training set distribution (i.e. VFI benchmark videos) and the target video distribution hinders the performance of ML approaches:
 differences in the range of motion, exposure time and frame-per-second have been shown to limit the
-generalization of state-of-the-art models to video frame interpolation in the wild [CITE]. %check me
+generalization of state-of-the-art models to video frame interpolation in the wild [SHO]. %check me
 
 % Implicit Neural Representation
 %Meanwhile, another line of research has shown that deep architectures themselves provide powerful priors to represent signals (DIP, SIREN).
@@ -155,8 +155,8 @@ generalization of state-of-the-art models to video frame interpolation in the wi
 In the mean time, research on implicit representations seek better discrete representations of continuous signals.
 In recent years Implicit Neural Representations (INR), i.e. representing signals as Neural Networks (NN)
 have been shown to offer several competitive advantages over explicit representations,
-with notable early successes for 3D shape representations [CITE].
-Of particular interest to us is the work of SIREN [CITE],
+with notable early successes for 3D shape representations \cite{mildenhall2020nerf}.
+Of particular interest to us is the work of SIREN \cite{sitzmann2020implicit},
 in which it has been shown that representing
 signals using Multi Layer Perceptrons (MLP) with sine activation functions
 carry meaningful representations of the signal derivatives.
@@ -205,12 +205,13 @@ On the other hand, our approach (in its current form) presents important limitat
 
 While we acknowledge the importance of the above limitations,
 we believe these to not be fundamental limitations of our approach but rather important future INR research directions.
-We discuss these limitations at length and present possible axis to tackle them in Section XXX.
+We discuss these limitations at length and present possible axis to tackle them in Section \ref{sec_lim}.
 The remainder of this paper is organized as follows:
-We briefly present some related work in Section XXX, the detail of our method in Section XXX,
-and design several experiments to highlight the advantages of our approach in Section XXX.
+We briefly present some related work in Section \ref{sec_related}, the detail of our method in Section \ref{sec_method},
+and design several experiments to highlight the advantages of our approach in Section \ref{sec_exp}.
 
 \section{Related Work}
+\label{sec_related}
 \textbf{Classical video interpolation.}
 The classical approach relies on optical flow to characterize the motion relationship between two frames.
 The quality of interpolation depends on the accuracy of the optical flow.
@@ -271,7 +272,7 @@ It requires visual features of the video and does not fully map the pixel coordi
 
 
 \section{Method}
-
+\label{sec_method}
 % We fit a video, and test on the middle frames
 We consider a ground-truth video as a continuous signal $v$ mapping continuous spatial ($x$, $y$) and temporal ($t$) coordinates to RGB values:
 
@@ -324,7 +325,7 @@ Regularizing the INR to satisfy the optical flow constraint equation result in n
 \end{figure}
 
 However, we found that optimizing the INR to only minimize this observation loss leads to overfitting the observation with high temporal frequencies:
-the intra-frame signal, which we aim to correctly recover, shows important deviations from the observed frames, as illustrated in Figure XXX.
+the intra-frame signal, which we aim to correctly recover, shows important deviations from the observed frames, as illustrated in Figure \ref{fig_w_wo_OF}.
 This observation has lead us to consider fitting not only the signal itself, but to also constrain its derivatives.
 In particular, we regularize the model so as to respect the optical flow constraint.
 
@@ -350,9 +351,10 @@ we can write the optical flow $F$ and the above constraint as:
 F(\textbf{x})=(\frac{\delta x}{\delta t}, \frac{\delta y}{\delta t}, 1) \\
 v(\textbf{x})=v(\textbf{x} + F(\textbf{x}))
 \end{aligned}
+\label{equ_6}
 \end{equation}
 
-First order Taylor expansion allows us to rewrite expand equation XXX into the following
+First order Taylor expansion allows us to rewrite expand equation \ref{equ_6} into the following
 \begin{equation}
 \begin{aligned}
 v(\textbf{x}) = v(\textbf{x}) + \frac{\delta v}{\delta \textbf{x}} \cdot F(\textbf{x}) \\
@@ -391,11 +393,11 @@ we do not assume constant derivatives of the signal on any interval.
 We believe this is the main factor behind our positive results.
 On the other hand, the optical flow we used was estimated from discrete consecutive frames,
 and thus does not represent the true infinitesimal motion field but an estimation of finite differences.
-We discuss this limitation in Section XXX.
+We discuss this limitation in Section \ref{sec_lim}.
 
 \section{Experiments}
-
-Following previous works, we use the Adobe[CITE], X4K[CITE] and ND Scene[CITE] dataset as benchmarks to compare to the state-of-the-art.
+\label{sec_exp}
+Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel} dataset as benchmarks to compare to the state-of-the-art.
 We run all additional experiments on the 720p240fps1.mov video of Adobe dataset illustrated in Figure \ref{fig_w_wo_OF}.
 Due to the time-consuming operation of optimizing SIREN representations, we optimize and evaluate all models on a 240$\times$360 resolution.
 For each video in the Adobe dataset, we selected only the first 40 frames for our experiments.
@@ -407,7 +409,7 @@ We will end up using a SIREN model with 6 depth and 720 width.
 We use an omega of 25 and a lambda of 0.12.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of 3.6e-5 during 15k epochs.
 
-We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in section \ref{sec_of_hf}.
+We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in section \ref{sec_of_high}.
 We show that limiting the frequency fitted improves interpolation at the cost of degrading the fit of observed frames,
 but it does not allow to reach the same accuracy as optical flow regularization,
 showing that OF regularization does more than only regularizing the fitted frequency range.
@@ -423,20 +425,21 @@ We show that our proposed optical flow regularization loss can help the lightwei
 This indicates that our method is potentially helpful for video compression.
 
 \subsection{Optical flow constraint and high frequencies}
-
-Figure 2 illustrates the fact that applying the optical flow constraint smoothes out the high-frequency variations
+\label{sec_of_high}
+Figure \ref{fig_w_wo_OF} illustrates the fact that applying the optical flow constraint smoothes out the high-frequency variations
 from the intermediate frames of vanilla SIREN representations.
 We start by questioning wether the OF constraint does more than simply removing the high frequency variations of the representation.
 To do so, we compare the results of vanilla SIREN representations geared towards different frequencies and compare
 their interpolated frames PSNR to those of OF-constrained representations.
 We constrain the SIREN frequency by varying their $\omega$ parameter,
-and report our comparison in Figure 3.
+and report our comparison in Figure \ref{fig_omega}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.5\textwidth]{"omega_wo_of"}
 \caption{Evolution of the PSNR of observed and interpolated frames with $\omega$ without OF loss.
 Limiting the high frequency fit alone does not reach the same interpolation accuracy as the OF loss.}
+\label{fig_omega}
 \end{figure}
 
 Constraining the high frequency with $\omega$ down to 5 degrades the fitting of observed frames,
@@ -448,10 +451,10 @@ confirming than the OF constraint provides more than high frequency regularizati
 
 \subsection{State of the art models}
 \label{sec_sota}
-Table XXX quantitatively compares the results of our method to state-of the art VFI models on different datasets.
-Despite its simplicity, and without any training data, our approach outperforms existing models on limited motion ranges (Table XXX).
-However, as illustrated in Figure XXX, it falls short of state-of-the-art methods on the more complex ND Scene benchmark due to larger motion ranges.
-We provide further comparison in the qualitative analysis of Section XXX and section XXX discusses possible ways forward
+Table \ref{tab_a} quantitatively compares the results of our method to state-of the art VFI models on different datasets.
+Despite its simplicity, and without any training data, our approach outperforms existing models on limited motion ranges (Table \ref{tab_b}).
+However, as illustrated in Figure \ref{fig_large}, it falls short of state-of-the-art methods on the more complex ND Scene benchmark due to larger motion ranges.
+We provide further comparison in the qualitative analysis of Section \ref{sec_qua} and section \ref{sec_lim} discusses possible ways forward
 to bridging the gap performance on large motion datasets.
 
 \begin{table}[!tb]
@@ -462,14 +465,15 @@ to bridging the gap performance on large motion datasets.
       \begin{tabular}[t]{l | l | l }
        &  Adobe-240FPS &  X4K  \\
       \hline
-      Super-SloMo [] &  27.77 / 0.886 & 27.38 / 0.852  \\
-      RRIN [XXX]  & 32.37 / 0.962 & 30.70 / 0.927  \\
-      BMBC [XXX]  & 27.83 / 0.917 & 27.42 / 0.858   \\
-      AdaCof [XXX] & 35.50 / 0.968 & 34.61 / 0.921 \\
-      ABME   [XXX] & 35.28 / 0.966 & 34.30 / 0.919 \\
-      FILM   [XXX] &	35.97 / 0.971 & \textbf{35.14} / 0.939 \\
+      Super-SloMo \citep{jiang2018super} &  27.77 / 0.886 & 27.38 / 0.852  \\
+      RRIN \cite{li2020video}  & 32.37 / 0.962 & 30.70 / 0.927  \\
+      BMBC \citep{park2020bmbc}  & 27.83 / 0.917 & 27.42 / 0.858   \\
+      AdaCof \cite{lee2020adacof} & 35.50 / 0.968 & 34.61 / 0.921 \\
+      ABME   \cite{park2021asymmetric} & 35.28 / 0.966 & 34.30 / 0.919 \\
+      FILM   \cite{reda2022film} &	35.97 / 0.971 & \textbf{35.14} / 0.939 \\
       Ours	& \textbf{36.52} / \textbf{0.977} & 35.06/ \textbf{0.944} \\
       \end{tabular}
+    \label{tab_a}  
     \end{minipage}%
     \begin{minipage}{.5\linewidth}
       \centering
@@ -477,12 +481,14 @@ to bridging the gap performance on large motion datasets.
         \begin{tabular}[t]{l | l }
         	    &   ND Scene  \\
         \hline
-        V-NF [X]   &  23.30 / 0.726 \\
-        NSFF [X]   & 28.03 / 0.925 \\
-        CURE [X]   & \textbf{36.91} / \textbf{0.984} \\
+        V-NF \cite{mildenhall2020nerf}   &  23.30 / 0.726 \\
+        NSFF \cite{li2021neural}   & 28.03 / 0.925 \\
+        CURE \cite{shangguan2022learning}   & \textbf{36.91} / \textbf{0.984} \\
         Ours	     & 29.22 / 0.921
         \end{tabular}
+	\label{tab_b}
     \end{minipage}
+
 \end{table}
 
 \subsection{Ablation study}
@@ -604,6 +610,7 @@ Do qualitative analysis
     \caption{SloMo}
 \end{subfigure}
 \caption{Small Motion Video Qualitative Analysis. The interpolated frame results and the residual heat map of the two videos are shown. Our proposed method can fit high frequency details well (e.g., grass), but fits low frequency information poorly (e.g., sky). The BMBC and RRIN lose the pixels at the edges.}
+\label{fig_small}
 \end{figure}
 
 
@@ -663,6 +670,7 @@ Do qualitative analysis
     \caption{Residual Error}
 \end{subfigure}
 \caption{Large Motion Video Qualitative Analysis}
+\label{fig_large}
 \end{figure}
 
 
@@ -679,15 +687,15 @@ Fit video.
 
 
 \section{Limitations}
-
+\label{sec_lim}
 While we believe our results to be very encouraging, the proposed approach is not yet practical.
 Here, we discuss what we believe to be the three main limitations of, and possible solutions to, our approach
 
-\textbf{Slow optimization process.} Fitting XXX frames of a video at XXX resolution currently takes XXX hours on a XXX GPU using Pytorch.
+\textbf{Slow optimization process.} Fitting 20 frames of a video at 240$\times$360 resolution currently takes 15 hours on a 4$\times$2080Ti GPU using Pytorch.
 This computation time is a huge draw back as it limits our ability to process full resolution video as well as
 to explore different hyper parameters and variants of the methods.
 We expect new methods speeding up the convergence of video INR to be very beneficial to this line of research.
-Given recent successes of INR approaches to high impact applications (i.e., video compression [CITE]),
+Given recent successes of INR approaches to high impact applications (i.e., video compression [SHO]),
 We hopefully expect to see advances in INR optimization research.
 
 % Relying on optical flow model.
@@ -703,8 +711,8 @@ Future work will aim to bypass our reliance on ML-based OF using alternative con
 In its current form, we only apply the optical flow constraint on the observed frames of the video.
 This has proven sufficient to reach state-of-the art on low motion ranges but is not sufficient for large motions.
 A promising axis of improvement would be to apply further regularization on the interpolates frames (i.e for non-inter input times like $t=0.5$)).
-Possible regularization may include interpolated optical flows, or texture constraints as has been proposed in related works [COTE],
-which may prevent the ghosting effects illustrated in Figure XXX.
+Possible regularization may include interpolated optical flows, or texture constraints as has been proposed in related works [SHO],
+which may prevent the ghosting effects illustrated in Figure \ref{fig_w_wo_OF}.
 
 \section{Conclusion}
 
@@ -717,7 +725,9 @@ previous section.
 Nevertheless, these limitations can be tackled and we hope the insights presented in this paper can serve prove useful in the future,
 either on their own or combined with related approaches.
 
-\bibliographystyle{unsrt}  
+\bibliographystyle{abbrv}  
 \bibliography{references}  
+
+
 
 \end{document}

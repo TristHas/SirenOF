@@ -253,22 +253,38 @@ However, most kernel-based methods can only generate one intermediate frame, and
 EDSC \cite{cheng2021multiple} is the first kernel-based method proposed to generate multiple intermediate frames, but the results are not as good as the optical flow method.
 
 
-\textbf{ Implicit Neural Representation. (INR)}
+\textbf{ Implicit Neural Representation} have encountered early successes in
+shape representation and 3D rendering applications [CITE].
+Since these early successes, a number of works have attempted to
+apply INR to a variety of signals including audio [CITE], images [CITE], videos [CITE],
+medical imaging and even climate data \cite{dupont2022coin++}.
+A series of recent works have attempted applied INR to video compression [CITE],
+with some works \cite{chen2021nerv} even reporting better quality restoration than practical codes on very high compression rates.
+These early results are encouraging given the high stakes behind efficient video compression.
+Although VFI also finds application in video compression,
+we differ from these works as we focus on VFI evaluation of video INR.
+Most related to ours is the concurrent work by Shangguan et al. \cite{shangguan2022learning},
+which also uses INR for video interpolation tasks.
+Their approach, CURE, differs from ours in scope:
+they propose to learn a prior on INR for video interpolation,
+while we only focus on leveraging INR to guide the interpolation process using a given optical flow.
+The work of 
 
+\textbf{Video Frame interpolation}
 INR use a neural network to represent an object approximately, which is essentially a way to parameterize the signal.
 Since \cite{mildenhall2020nerf}, \cite{sitzmann2020implicit} was developed, INR has performed well in the areas of 3D vision tasks, images, and video.
 The image and video tasks most relevant to this paper are around the direction of image/video compression.
 
 COIN \cite{dupont2021coin} first proposed the use of INR to compress images, mapping pixel coordinates to RGB values.
-COIN++ \cite{dupont2022coin++} cooperated with the meta-learning approach for image compression work based on COIN.
-In the field of video compression, NeRV \cite{chen2021nerv} proposed by Chen et al. successfully encodes the video into a neural network, i.e., the content of the video is saved using a neural network.
+COIN++  cooperated with the meta-learning approach for image compression work based on COIN.
+In the field of video compression, NeRV  proposed by Chen et al.
+successfully encodes the video into a neural network, i.e., the content of the video is saved using a neural network.
 Only the frame index of the model needs to be provided, and the corresponding RGB picture is output.
 In other words, this makes it possible to output infinite frames of video using a neural network.
 Although NeRV briefly attempts the task of performing video frame interpolation, this is not NeRV's main work.
 The NRFF \cite{rho2022neural} proposed by Rho et al., which uses optical flow and residuals information for video compression, does not directly fit all frames.
 
-Most related to our approach is the concurrent work by Shangguan et al. \cite{shangguan2022learning}, which also uses INR for video interpolation tasks.
-Their approach, CURE, uses machine learning.
+Most related to our approach
 It requires visual features of the video and does not fully map the pixel coordinates and frame positions of the video to RGB images.
 
 

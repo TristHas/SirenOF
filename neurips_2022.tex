@@ -213,80 +213,35 @@ and design several experiments to highlight the advantages of our approach in Se
 
 \section{Related Work}
 \label{sec_related}
-\textbf{Classical video interpolation.}
-The classical approach relies on optical flow to characterize the motion relationship between two frames.
-The quality of interpolation depends on the accuracy of the optical flow.
-Classical optical flow is usually sparse and can only work at one pixel or sub-pixel level of motion \cite{chen2012real}.
-Sparse feature extraction \cite{liu2008sift} is used to enhance the optical flow correctly.
-In order to synthesize dense optical flow and work on large displacements, \cite{weinzaepfel2013deepflow} uses sparse convolution and max-pooling.
-But instead of learning the model, the parameters are set manually.
-
-\textbf{Deep learning video interpolation.}
-A number of deep learning models have been developed for video interpolation tasks.
-Almost all models can be categorized as: optical flow based, and kernel based.
-
-\textit{Optical Flow-Based.}
-Optical flow-based approaches are the most popular in video frame interpolation.
-The standard technique of video frame interpolation aims at explicitly estimating motion in the form of optical flow, warping two input frames to an intermediate frame, and synthesizing the occlusion region. The frames are constrained by the assumption of linear motion and constant luminance between them.
-However, video interpolation of video frames is heavily dependent on the accuracy of optical flow.
-
-The Super-SloMo \cite{jiang2018super} proposed by Jiang et,al. is a non-negligible work in the task of optical flow-based video frame interpolation.
-Super-SloMo extends the U-Net architecture proposed by Liu et al \cite{liu2017video}.
-The bilateral optical flow is calculated for the input two frames and approximates the key frame with the intermediate optical flow of the two frames.
-Then the frames of the input are warped according to the obtained intermediate optical flow.
-
-RRIN \cite{li2020video} mentioned that the estimation of intermediate frames in Super-SloMo works poorly near the boundaries because the optical flow is not locally smooth in these regions.
-RRIN proposes to improve the accuracy of optical flow by residual learning.
-BMBC \cite{park2020bmbc} adds two additional approximate vectors to Super-SloMo to make the bilateral motion estimation more accurate.
-
-
-\textit{Kernel-Based.}
-To avoid explicit motion estimation and warping stages, the kernel-based approach performs a convolution operation on the input frames and the output of the convolution is used as the result of interpolating the frames.
-Niklaus et al. \cite{niklaus2017video1} proposed a fully convolutional deep neural network using a spatially adaptive convolutional kernel to perform the prediction of intermediate frames for two frames with consecutive inputs.
-Niklaus et al. \cite{niklaus2017video2} improved their method by using a separable convolution with spatially adaptive one-dimensional convolutional kernel pairs estimated for each pixel, in reducing the parameters of the model.
-The results of kernel-based methods for frame interpolation can be limited by the size of the kernel.
-
-Lee et al. proposed Adacof \cite{lee2020adacof}, which can use any pixel at any position for convolution operation,
-so that the convolution kernel is no longer limited to the local range.
-And many methods residing in optical flow are defined as a special case of Adacof.
-However, most kernel-based methods can only generate one intermediate frame, and if one wants to generate multiple intermediate frames, one needs to do it recursively.
-EDSC \cite{cheng2021multiple} is the first kernel-based method proposed to generate multiple intermediate frames, but the results are not as good as the optical flow method.
-
 
 \textbf{ Implicit Neural Representation} have encountered early successes in
 shape representation and 3D rendering applications [CITE].
 Since these early successes, a number of works have attempted to
 apply INR to a variety of signals including audio [CITE], images [CITE], videos [CITE],
-medical imaging and even climate data \cite{dupont2022coin++}.
-A series of recent works have attempted applied INR to video compression [CITE],
+medical imaging and climate data \cite{dupont2022coin++}.
+In [CITE] the authors have shown that MLP with sine activations
+could fit representations of images with meaningful representations of their gradient,
+and that such models could be optimized to satisfy constraints on their gradients.
+Combined, these two findings have motivated our idea to apply the optical flow constraint to the gradient of SIREN representations of videos.
+A series of recent works have attempted to apply INR to video compression [CITE],
 with some works \cite{chen2021nerv} even reporting better quality restoration than practical codes on very high compression rates.
-These early results are encouraging given the high stakes behind efficient video compression.
+These early results are especially interesting for the high stakes behind video compression.
 Although VFI also finds application in video compression,
-we differ from these works as we focus on VFI evaluation of video INR.
+we differ from these works as we focus on a VFI evaluation protocol of our proposed INR.
 Most related to ours is the concurrent work by Shangguan et al. \cite{shangguan2022learning},
-which also uses INR for video interpolation tasks.
-Their approach, CURE, differs from ours in scope:
-they propose to learn a prior on INR for video interpolation,
+which also uses INR for video interpolation tasks. Their approach, CURE, differs from ours in scope:
+they propose to learn a prior on the INR,
 while we only focus on leveraging INR to guide the interpolation process using a given optical flow.
-The work of 
 
-\textbf{Video Frame interpolation}
-INR use a neural network to represent an object approximately, which is essentially a way to parameterize the signal.
-Since \cite{mildenhall2020nerf}, \cite{sitzmann2020implicit} was developed, INR has performed well in the areas of 3D vision tasks, images, and video.
-The image and video tasks most relevant to this paper are around the direction of image/video compression.
-
-COIN \cite{dupont2021coin} first proposed the use of INR to compress images, mapping pixel coordinates to RGB values.
-COIN++  cooperated with the meta-learning approach for image compression work based on COIN.
-In the field of video compression, NeRV  proposed by Chen et al.
-successfully encodes the video into a neural network, i.e., the content of the video is saved using a neural network.
-Only the frame index of the model needs to be provided, and the corresponding RGB picture is output.
-In other words, this makes it possible to output infinite frames of video using a neural network.
-Although NeRV briefly attempts the task of performing video frame interpolation, this is not NeRV's main work.
-The NRFF \cite{rho2022neural} proposed by Rho et al., which uses optical flow and residuals information for video compression, does not directly fit all frames.
-
-Most related to our approach
-It requires visual features of the video and does not fully map the pixel coordinates and frame positions of the video to RGB images.
-
+Classical \textbf{Video Frame Interpolation}
+research have mostly relied on optical flow to guide the interpolation process [CITE].
+Most works have assume uniform optical flow between consecutive frames
+so as to linearly interpolate intermediate frames along the optical flow directions.
+One exception is the work of [CITE], in which the authors propose to take into account acceleration to perform the interpolation,
+leading to quadratic interpolation. Our work only constrains the first derivatives of the signal, but we differ from classical works
+in that we apply the OF to the exact representation derivatives, so that we do not need to assume constancy of signal derivatives on any time interval.
+Rrecent OF-based VFI leverages deep learning for optical flow estimation and interpolation \cite{jiang2018super, liu2017video, li2020video, park2020bmbc},
+while kernel-based approaches avoid explicit motion estimation and warping stages \cite{niklaus2017video1,lee2020adacof,cheng2021multiple}.
 
 \section{Method}
 \label{sec_method}
@@ -400,7 +355,7 @@ can be understood as keeping constant brightness along the optical flow trajecto
 The total loss we use to optimize the INR is a weighted sum of these two terms:
 
 \begin{equation}
-\mathcal{L} = \lambda \mathcal{L}_{obs} + (1-\lambda) \mathcal{L}_{of}
+\mathcal{L} = (1-\lambda) \mathcal{L}_{obs} + \lambda \mathcal{L}_{of}
 \end{equation}
 
 where $\lambda$ is a hyper-parameter taking values between 0 and 1, whose impact we investigate in the following section.
@@ -414,7 +369,7 @@ We discuss potential alternatives in Section \ref{sec_lim}.
 
 \section{Experiments}
 \label{sec_exp}
-Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel} 
+Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel}
 datasets as benchmarks to compare our approach to state-of-the-art models.
 We use every two frames of the videos as observation frames to fit the SIREN,
 and evaluate the ability of to SIREN to interpolate on every other two (intermediate) frames.
@@ -429,7 +384,7 @@ SIREN models with depth 9, width 512 and an $\omega$ of 30.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of $10^{-5}$ during 5000 epochs.
 We uses $\lambda = 0.12$ for the loss function. We compute the optical flow of videos in original resolution using the GMA \cite{jiang2021learning} OF model.
 
-We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in section \ref{sec_of_high}.
+We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in Section \ref{sec_of_high}.
 We show that limiting the frequency fitted improves interpolation at the cost of degrading the fit of observed frames,
 but it does not allow to reach the same accuracy as optical flow regularization,
 showing that OF regularization does more than only regularizing the fitted frequency range.
@@ -514,7 +469,7 @@ The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated sepa
 Table \ref{tab_a} quantitatively compares the results of our method to state-of the art VFI models on different datasets.
 Despite its simplicity, and without any training data, our approach outperforms most existing models on limited motion ranges (Table \ref{tab_b}).
 However, as illustrated in Figure \ref{fig_large}, it falls short of state-of-the-art methods on the more complex ND Scene benchmark due to larger motion ranges.
-We provide further comparison in the qualitative analysis of Section \ref{sec_qua} and section \ref{sec_lim}
+We provide further comparison in the qualitative analysis of Section \ref{sec_qua} and Section \ref{sec_lim}
 discusses possible ways forward to bridging the gap performance on large motion datasets.
 
 \subsection{Ablation study}
@@ -524,7 +479,7 @@ Figure \ref{fig_abl} summarizes the impact of the main parameters of our method.
 In (a) we observe a trade-off between the observed and interpolated frames quality in the low $\lambda$ ranges.
 The quality of interpolated frames peaks at $\lambda=0.12$, beyond which point the interpolated frames quality is limited
 by the quality of the fit to the observed frames, in a similar way to the classical overfitting/underfitting trade-off.
-However, it should be noted that the PSNR of observed frames for high $\lambda$ differs widely depending on the SIREN's width.
+However, it should be noted that the PSNR of observed frames differs widely depending on the SIREN's width.
 Indeed, as we will show in Section \ref{sec_video_fit}, the OF constraints actually helps narrow SIREN better fit the observed frames.
 In (b) and (c) we observe that both higher learning rates and longer training times improve both observed and interpolated frames.
 The learning rate is limited in amplitude by instabilities of the optimization procedure,
@@ -756,7 +711,7 @@ and possible ways to address it.
 This computation time is an important drawback as it limits our ability to process full resolution video,
  as well as to explore different hyper parameters and variants of the methods within realistic times.
 We expect new methods speeding up the convergence of video INR to be very beneficial to this line of research.
-Given recent successes of INR approaches to high impact applications (i.e., video compression [SHO], climate dataset compression [SHO]),
+Given recent successes of INR approaches in signal compression [SHO, shape, nerv, coin++],
 we hopefully expect to see such development in INR optimization research.
 
 % Relying on optical flow model.

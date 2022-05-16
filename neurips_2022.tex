@@ -699,7 +699,7 @@ As $\mathcal{L}_{obs}$ explicitly maximizes the PSNR of observed frames,
 we expected the addition of the $\mathcal{L}_{of}$ term to negatively impact the PSNR of observed frames,
 especially for capacity-limited SIREN which should have to compromise between satisfying both loss terms.
 It turns out that, for width up to 50, optimizing the SIREN with the additional OF constraint
-actually fitting the observed frames.
+actually improves the fit to the observed frames.
 
 \label{sec_video_fit}
 \begin{figure}[h]
@@ -710,12 +710,19 @@ Left: Trend from very narrow to very wide models.
 Right: Zoom on the low width regime with the x axis expressed either in number of neurons or corresponding Bits Per Pixel measure.}
 \end{figure}
 
-
+Although a complete investigation of this phenomena is out of the scope of this work,
+we highlight how this observation may prove interesting for future work:
+From a practical standpoint, improving the fit of low-capacity INR would lead to better video compression INR.
+It remains to be seen wether such phenomena may be replicated in more practical architectures such as (i.e. [CITE]).
+From a theoretical standpoint, width has been shown to help optimization by linearizing NN Jacobian [CITE].
+Thus, understanding how the OF constraint on the NN derivative somehow improves
+the optimization landscape of narrow network may lead to interesting insights.
 
 \section{Current limitations and future work}
 
-While we believe our results to be very promising, the proposed approach in its current is not yet practical for general VFI.
-Here, we discuss what we believe to be the three main limitations of, and most impactful improvements to our approach.
+While we believe our results to be very promising, the proposed approach in its current is not yet practical for VFI.
+Here, we discuss what we believe to be the three main limitations of our approach,
+and possible ways to address it.
 
 \textbf{Slow optimization process.} Fitting XXX frames of a video at XXX resolution currently takes XXX hours on a XXX GPU using Pytorch.
 This computation time is an important drawback as it limits our ability to process full resolution video,

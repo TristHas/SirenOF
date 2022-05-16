@@ -397,7 +397,7 @@ and thus does not represent the true infinitesimal motion field but an estimatio
 We discuss potential alternatives in Section \ref{sec_lim}.
 
 \section{Experiments}
-
+\label{sec_exp}
 Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel} 
 datasets as benchmarks to compare our approach to state-of-the-art models.
 We use every two frames of the videos as observation frames to fit the SIREN,
@@ -411,7 +411,7 @@ Unless specified otherwise, we use the following default parameters:
 
 SIREN models with depth 9, width 512 and an $\omega$ of 30.
 We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of $10^{-5}$ during 5000 epochs.
-We uses $\lambda = 0.12$ for the loss function. We compute the optical flow of videos in original resolution using the GMA [CITE] OF model.
+We uses $\lambda = 0.12$ for the loss function. We compute the optical flow of videos in original resolution using the GMA \cite{jiang2021learning} OF model.
 
 We start by showing the impact of controlling the fit of high frequencies without the optical flow loss in section \ref{sec_of_high}.
 We show that limiting the frequency fitted improves interpolation at the cost of degrading the fit of observed frames,
@@ -428,7 +428,7 @@ We show that our proposed optical flow regularization loss can help the lightwei
 This indicates that our method is potentially helpful for video compression.
 
 \subsection{Optical flow constraint and high frequencies}
-
+\label{sec_of_high}
 Figure \ref{fig_w_wo_OF} illustrates the fact that applying the optical flow constraint smoothes
 out the high-frequency variations from the intermediate frames of vanilla SIREN representations.
 Healthy skepticism leads us to start by asking the following question:
@@ -451,12 +451,12 @@ but improves the quality of interpolated frames.
 This suggests that $\omega$ behaves similarly to a regularization parameter
 controlling a regime of overfitting to the observed frames high frequencies for high $\omega$ values,
 versus underfitting for low $\omega$ values.
-Figure XXX further shows that the PSNR of interpolated frames using vanilla SIREN models remain well under the OF-constrained SIREN,
+Figure \ref{fig_omega} further shows that the PSNR of interpolated frames using vanilla SIREN models remain well under the OF-constrained SIREN,
 even for the best performing, low-frequency range models,
 which confirms than the OF constraint does more than only constraining the fit to high frequencies.
 Note that we did not vary the $\omega$ of the OF constrained SIREN in this figure in order to better illustrate our point,
 the red line represents results for the best performing $\omega$.
-The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated separately in Figure XXX.
+The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated separately in Figure \ref{fig_abl_omega}.
 
 \subsection{State of the art models}
 \label{sec_sota}
@@ -504,12 +504,12 @@ discusses possible ways forward to bridging the gap performance on large motion 
 \subsection{Ablation study}
 \label{sec_abl}
 
-Figure XXX summarizes the impact of the main parameters of our method.
+Figure \ref{fig_abl} summarizes the impact of the main parameters of our method.
 In (a) we observe a trade-off between the observed and interpolated frames quality in the low $\lambda$ ranges.
 The quality of interpolated frames peaks at $\lambda=0.12$, beyond which point the interpolated frames quality is limited
 by the quality of the fit to the observed frames, in a similar way to the classical overfitting/underfitting trade-off.
 However, it should be noted that the PSNR of observed frames for high $\lambda$ differs widely depending on the SIREN's width.
-Indeed, as we will show in Section XXX, the OF constraints actually helps narrow SIREN better fit the observed frames.
+Indeed, as we will show in Section \ref{sec_video_fit}, the OF constraints actually helps narrow SIREN better fit the observed frames.
 In (b) and (c) we observe that both higher learning rates and longer training times improve both observed and interpolated frames.
 The learning rate is limited in amplitude by instabilities of the optimization procedure,
 while the training time is limited by our practical time constraints.
@@ -540,6 +540,7 @@ The peak width gets narrower with increasing depth.
 \centering
     \includegraphics[width=1\linewidth]{omega.jpg}
     \caption{$\omega$}
+    \label{fig_abl_omega}
 \end{subfigure}%
 \begin{subfigure}{0.3\textwidth}
 \centering
@@ -557,10 +558,10 @@ while plot (e) only shows the interpolated frames PSNR}
 \subsection{Qualitative analysis}
 \label{sec_qua}
 
-Figure XXX and XXX provide a qualitative illustration to the results of Section 4.2:
-The upper frame in Figure XXX shows that our method tends to outperform other methods on videos with limited motion range.
+Figure \ref{fig_small} and \ref{fig_large} provide a qualitative illustration to the results of Section \ref{sec_sota}
+The upper frame in Figure \ref{fig_small} shows that our method tends to outperform other methods on videos with limited motion range.
 In particular it seems to better catch high spatial frequency regions (grass, sharp edges of the building).
-In contrast, large motion as illustrated in Figure XXX shows ghosting effects that the OF regularization is not able to address.
+In contrast, large motion as illustrated in Figure \ref{fig_large} shows ghosting effects that the OF regularization is not able to address.
 
 \begin{figure}[h]
 \centering
@@ -638,7 +639,7 @@ the lower one shows a rare failure case.}
 \label{fig_small}
 \end{figure}
 
-The lower part of Figure XXX shows a rare failure case of our approach on limited motion ranges:
+The lower part of Figure \ref{fig_small} shows a rare failure case of our approach on limited motion ranges:
 some artificial stain-like pattern appear in the sky background,
 suggesting additional care may be needed especially in low frequency regions.
 Despite this rare exception, the overall quality of interpolation
@@ -703,7 +704,7 @@ on low motion range videos performs on par with the best existing methods.
 
 \subsection{Video fitting}
 
-Figure XXX shows an unexpected side-effect of the OF regularization observed for narrow networks.
+Figure \ref{fig_video_fit} shows an unexpected side-effect of the OF regularization observed for narrow networks.
 As $\mathcal{L}_{obs}$ explicitly maximizes the PSNR of observed frames,
 we expected the addition of the $\mathcal{L}_{of}$ term to negatively impact the PSNR of observed frames,
 especially for capacity-limited SIREN which should have to compromise between satisfying both loss terms.
@@ -717,13 +718,14 @@ actually improves the fit to the observed frames.
 \caption{Evolution of the \textbf{observed} frames PSNR with depth, with and without OF regularization.
 Left: Trend from very narrow to very wide models.
 Right: Zoom on the low width regime with the x axis expressed either in number of neurons or corresponding Bits Per Pixel measure.}
+\label{fig_video_fit}
 \end{figure}
 
 Although a complete investigation of this phenomena is out of the scope of this work,
 we highlight how this observation may prove interesting for future work:
 From a practical standpoint, improving the fit of low-capacity INR would lead to better video compression INR.
-It remains to be seen wether such phenomena may be replicated in more practical architectures such as (i.e. [CITE]).
-From a theoretical standpoint, width has been shown to help optimization by linearizing NN Jacobian [CITE].
+It remains to be seen wether such phenomena may be replicated in more practical architectures such as (i.e. [SHO]).
+From a theoretical standpoint, width has been shown to help optimization by linearizing NN Jacobian [SHO].
 Thus, understanding how the OF constraint on the NN derivative somehow improves
 the optimization landscape of narrow network may lead to interesting insights.
 

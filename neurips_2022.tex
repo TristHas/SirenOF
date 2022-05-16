@@ -84,13 +84,13 @@
 
 \begin{abstract}
 Recent works have shown the ability of Implicit Neural Representations (INR) to carry meaningful representations of signal derivatives.
-In this work, we leverage this property to perform video frame interpolation
+In this work, we leverage this property to perform Video Frame Interpolation (VFI)
 by explicitly constraining the derivatives of the INR to satisfy the optical flow constraint equation.
-We achieve state of the art video frame interpolation on limited motion ranges
+We achieve state of the art VFI on limited motion ranges
 using only a target video and its optical flow, without learning the interpolation operator from additional training data.
 We further show that constraining the INR derivatives not only
 allows to interpolate intermediate frames but also improves the ability of narrow networks to fit the observed frames,
-which suggests potential applications to INR optimization and video compression.
+which suggests potential applications to video compression and INR optimization.
 \end{abstract}
 
 \section{Introduction}
@@ -398,7 +398,7 @@ We discuss potential alternatives in Section \ref{sec_lim}.
 
 \section{Experiments}
 
-Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel} 
+Following previous works, we use the Adobe\cite{su2017deep} , X4K\cite{sim2021xvfi} and ND Scene\cite{yoon2020novel}
 datasets as benchmarks to compare our approach to state-of-the-art models.
 We use every two frames of the videos as observation frames to fit the SIREN,
 and evaluate the ability of to SIREN to interpolate on every other two (intermediate) frames.
@@ -477,7 +477,7 @@ The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated sepa
       FILM   \cite{reda2022film} &	35.97 / 0.971 & \textbf{35.14} / 0.939 \\
       Ours	& \textbf{36.52} / \textbf{0.977} & 35.06/ \textbf{0.944} \\
       \end{tabular}
-    \label{tab_a}  
+    \label{tab_a}
     \end{minipage}%
     \begin{minipage}[t]{.5\linewidth}
       \centering
@@ -498,7 +498,7 @@ The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated sepa
 Table \ref{tab_a} quantitatively compares the results of our method to state-of the art VFI models on different datasets.
 Despite its simplicity, and without any training data, our approach outperforms most existing models on limited motion ranges (Table \ref{tab_b}).
 However, as illustrated in Figure \ref{fig_large}, it falls short of state-of-the-art methods on the more complex ND Scene benchmark due to larger motion ranges.
-We provide further comparison in the qualitative analysis of Section \ref{sec_qua} and section \ref{sec_lim} 
+We provide further comparison in the qualitative analysis of Section \ref{sec_qua} and section \ref{sec_lim}
 discusses possible ways forward to bridging the gap performance on large motion datasets.
 
 \subsection{Ablation study}
@@ -761,14 +761,14 @@ which may prevent the ghosting effects illustrated in Figure \ref{fig_w_wo_OF}.
 \section{Conclusion}
 
 In this paper, we have shown that regularizing INR using the optical flow constraint equation
-enables us to perform VFI without relying on ML to perform the interpolation step.
-We have shown that this approach is sufficient to reach state-of-the-art interpolation on low motion range videos,
+enables us to perform VFI without relying on ML for the interpolation step.
+We have shown that this approach is sufficient to reach state-of-the-art interpolation on videos with low motion range,
 without resorting to learning-based interpolation.
 This method is not yet practical for high resolution large motion range videos due to the three limitations highlighted in the previous section.
 Nevertheless, these limitations can be tackled and we hope the insights presented in this paper can serve prove useful in the future,
 either on their own or combined with related approaches.
 
-\bibliographystyle{abbrv}  
-\bibliography{references}  
+\bibliographystyle{abbrv}
+\bibliography{references}
 
 \end{document}

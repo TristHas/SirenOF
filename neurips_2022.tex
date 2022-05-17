@@ -99,7 +99,7 @@ Many core concepts across the fields of signal processing are defined in terms o
 surfaces are continuous manifolds in space,
 motion is a rate of change in space through time, etc.
 In contrast, modern digital hardware is inherently discrete:
-digital sensors capture discrete observations of the world sampled in time and space;
+digital sensors capture discrete observations of the world regularly sampled in time and space;
 computers store and process discrete representations of signals.
 In order to model continuous notions on discrete signal representations,
 classical methods have used different simplifying assumptions,
@@ -121,21 +121,21 @@ optical flow directions before interpolating the shifted intensities onto the in
 Such approaches suffer from the following two main limitations:
 
 \begin{itemize}
-\item The optical flow is prone to errors due to obstructions and illumination variations unrelated to the motion field.
-\item Assumptions of constant first or second derivatives of the signal do not necessarily hold true in practice.
+\item The optical flow is prone to errors due to occlusions, external illumination variations, etc.
+\item Assumptions of constant motion field or its derivatives do not often hold true in practice.
 \end{itemize}
 
 These limitations share a common root cause: discretization.
-Indeed, both the optical flow constraint equation, from which is derived the optical flow,
-and assumptions of constant motion field only truly hold at the infinitesimal scale,
-for time deltas typically much smaller than those of practically used Frames Per Second (FPS).
+Indeed, both the constant brightness assumption, from which is derived the optical flow,
+and assumptions of constant motion field used by the interpolation process,
+only truly hold at the infinitesimal scale, for time deltas typically much smaller than those of practically used Frames Per Second (FPS).
 
 ML approaches [SHO] have instead proposed to learn the frame interpolation operator from large video collections,
 without formulating explicit assumption on the signal.
 While these approaches have achieved great success in terms of benchmark performance,
-they are prone to generalization errors due to domain shifts. % Check me
+they are prone to generalization errors caused by domain shifts. % Check me
 Indeed differences between the training set distribution (i.e. VFI benchmark videos) and the target video distribution hinders the performance of ML models:
-differences in the range of motion, exposure time and FPS have been shown to limit the
+differences in the range of motion, exposure time, FPS and blur have been shown to limit the
 generalization of state-of-the-art models to video frame interpolation in the wild [SHO]. %check me
 
 % Implicit Neural Representation
@@ -150,8 +150,7 @@ In recent years Implicit Neural Representations (INR), i.e. representing signals
 have been shown to offer several competitive advantages over explicit representations,
 with notable early successes for 3D shape representations \cite{mildenhall2020nerf}.
 Of particular interest to us is the work of SIREN \cite{sitzmann2020implicit},
-in which the authors have shown that representing
-signals using Multi Layer Perceptrons (MLP) with sine activation functions
+in which the authors have shown that representing images using Multi Layer Perceptrons (MLP) with sine activation functions
 allowed for meaningful representations of the signal derivatives.
 Inspired by this work, we question wether SIREN may be used to guide the interpolation
 process of VFI by controlling the exact derivatives of the signal instead of the finite differences
@@ -175,37 +174,44 @@ suggesting potential applications in INR optimization and video compression.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{Method}
-\caption{Illustration of our approach}
+\caption{Illustration of our approach.
+We optimize SIREN to minimize the weighted sum of two losses:
+The observation loss measures the fit to the video frames,
+and the OF loss measures the orthogonality
+between the SIREN derivatives and the video's optical flow}
 \end{figure}
 
-To summarize, the contributions of this work are:
+To summarize the contributions of this work, we show that:
 \begin{itemize}
-\item We propose a regularization method for SIREN which achieves state-of-the-art video frame interpolation on small motion ranges.
-\item In contrast to other state-of-the art approaches, our approach does not rely on training on a large external training set.
-It only relies on the target video and its estimated optical flow.
-\item We show that our approach not only helps generalizing to intermediate frame,
-but also helps narrow models fit the observed frames.
+\item SIREN representations of videos can be constrained so as to satisfy the OF constraint in their exact derivatives.
+\item Such representations reach state of the art VFI on limited motion ranges, without learning a residual flow nor interpolation operator.
+\item The OF constraint not only allows SIREN to generate intermediate frames, but also improve the ability of narrow SIREN to fit observed frames.
 \end{itemize}
 
 On the other hand, our approach (in its current form) presents important limitations:
 
 \begin{itemize}
 \item Optimization of the INR is very time-consuming, which hinders our ability to work on full resolution videos for time constraints.
-\item Our method currently only works on limited motion range. It does not match state-of-the art ML models on large motion ranges.
+\item Our method currently only works on limited motion range, it does not match state of the art ML models on large motion ranges.
 \item It relies on an input optical flow, which is computed using existing ML-based model and is thus prone to domain shift generalization errors.
 \end{itemize}
 
-While we acknowledge the importance of the above limitations,
-we believe these to not be fundamental limitations of our approach but important future INR research directions.
-We discuss these limitations at length and present potential ways to approach them in Section \ref{sec_lim}.
+%While we acknowledge the importance of the above limitations,
+%we believe these to not be fundamental limitations of our approach but important future INR research directions.
+
+Given these limitations, the aim of this paper is not to provide a standalone production ready VFI system.
+Instead, we hope to provide insightful analysis for future work to either build on or integrate with existing methods.
 The remainder of this paper is organized as follows:
-We briefly present some related work in Section \ref{sec_related}, the detail of our method in Section \ref{sec_method},
-and design several experiments to highlight the advantages of our approach in Section \ref{sec_exp}.
+We briefly present some related work in Section \ref{sec_related},
+the detail of our method in Section \ref{sec_method},
+and design several experiments to highlight the merits of our approach in Section \ref{sec_exp}.
+Finally, we discuss current limitations and present potential ways to address them in Section \ref{sec_lim},
+before concluding in Section \ref{sec_conc}.
 
 \section{Related Work}
 \label{sec_related}
 
-\textbf{ Implicit Neural Representation} have met early success in
+\textbf{ Implicit Neural Representations} have met early success in
 shape representation and 3D rendering [CITE].
 Since then, a number of works have attempted to
 apply INR to different signals including audio [CITE], images [CITE], videos [CITE],
@@ -225,13 +231,13 @@ Their approach, CURE, differs from ours in scope:
 they propose to learn a prior on the INR,
 while we only focus on leveraging INR to guide the interpolation process using a given optical flow.
 
-Classical \textbf{Video Frame Interpolation} research have mostly relied on optical flow to guide the interpolation process [CITE].
+\textbf{Video Frame Interpolation} research has largely relied on optical flow to guide the the video frame interpolation process [CITE].
 Most works have assumed uniform optical flow between consecutive frames so as to linearly interpolate intermediate frames along the optical flow directions.
 One exception is the work of [CITE], in which the authors propose to take into account acceleration to perform the interpolation, leading to quadratic interpolation.
 Our work only constrains the first derivatives of the signal.
 We differ from classical works in that we apply the OF to the exact representation derivatives,
 so that we do not need to assume constancy of signal derivatives on any time interval.
-Rrecent OF-based VFI leverages deep learning for optical flow estimation and interpolation \cite{jiang2018super, liu2017video, li2020video, park2020bmbc},
+Recent OF-based VFI leverages deep learning for optical flow estimation and interpolation \cite{jiang2018super, liu2017video, li2020video, park2020bmbc},
 while kernel-based approaches avoid explicit motion estimation and warping stages \cite{niklaus2017video1,lee2020adacof,cheng2021multiple}.
 
 \section{Method}
@@ -365,7 +371,7 @@ Following previous works, we use the Adobe\cite{su2017deep}, X4K\cite{sim2021xvf
 datasets as benchmark to compare our method to state-of-the-art models.
 We use every two frames of each video as observations,
 and evaluate the ability of SIREN to interpolate on every other (intermediate) frame.
-For the Adobe dataset, we evaluate our method on the eight videos that were used as testing set in previous works \citep{jiang2018super}.
+For the Adobe dataset, we evaluate our method on the eight videos test split proposed in previous works \citep{jiang2018super}.
 We run all additional experiments on the 720p240fps1.mov video of the Adobe dataset (illustrated in Figure \ref{fig_w_wo_OF}).
 Due to the time-consuming operation of optimizing SIREN representations,
 we optimize and evaluate all models on a $240 \times 360$ pixel resolution,
@@ -373,7 +379,7 @@ and we restrict the Adobe dataset videos to their first 40 frames.
 Unless specified otherwise, we use the following default parameters:
 
 SIREN models with depth 9, width 512 and an $\omega$ of 30.
-We optimize the models using the Adam optimizer using a cosine learning rate with maximum learning rate of $10^{-5}$ during 5000 epochs.
+We optimize the models with the Adam optimizer using a cosine learning rate with maximum learning rate of $10^{-5}$ during 5000 epochs.
 We uses $\lambda = 0.12$ for the loss function. We compute the optical flow of videos in original resolution using the GMA \cite{jiang2021learning} OF model.
 
 In Section \ref{sec_of_high}, we start by highlighting a trade-off akin to
@@ -390,18 +396,19 @@ Finally, Section \ref{sec_video_fit} presents a surprising and counter-intuitive
 we show that our OF loss helps SIREN converge to higher PSNR on the observed frames,
 opening new potential perspectives for INR optimization and video compressions.
 
-\subsection{Optical flow constraint and high frequencies}
+\subsection{Optical flow constraint and signal frequencies}
 \label{sec_of_high}
-Figure \ref{fig_w_wo_OF} illustrates the fact that applying the optical flow constraint smoothes
-out the high-frequency variations from the intermediate frames of vanilla SIREN representations.
-Healthy skepticism leads us to start by asking the following question:
-Is the impact of the OF constraint limited to smoothing out the undesired high-frequency variations of vanilla SIREN representations?
-To do so, we compare the results of vanilla SIREN representations geared towards different frequency ranges,
-and quantitatively compare their interpolated frames PSNR to those of OF-constrained representations.
-We constrain the SIREN frequencies by varying their $\omega$ parameter, and report our comparison in Figure \ref{fig_omega},
+Figure \ref{fig_w_wo_OF} illustrates the fact that the OF constraint smoothes
+out high-frequency noise in the interpolated frames of vanilla SIREN representations.
+Healthy skepticism leads us to question wether the impact of the OF constraint is limited to dampening
+high frequency components of vanilla SIREN representations.
+To do so, we analyze the representations of vanilla SIREN geared towards different frequency ranges,
+and compare them to OF-constrained SIREN representations.
+We constrain the vanilla SIREN frequencies by varying their $\omega$ parameter,
+and report our comparison in Figure \ref{fig_omega},
 with low $\omega$ values corresponding to lower frequency ranges.
 
-\begin{figure}[t]
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.5\textwidth]{"omega_wo_of"}
 \caption{Evolution of the PSNR of observed and interpolated frames with $\omega$ without OF loss.
@@ -409,14 +416,12 @@ Limiting the high frequency fit alone does not reach the same interpolation accu
 \label{fig_omega}
 \end{figure}
 
-Constraining the frequency range of vanilla SIREN with $\omega$ down to 5 degrades the fitting of observed frames,
-but improves the quality of interpolated frames.
-This suggests that $\omega$ behaves similarly to a regularization parameter
-controlling a regime of overfitting to the observed frames high frequencies for high $\omega$ values,
-versus underfitting for low $\omega$ values.
-Figure \ref{fig_omega} further shows that the PSNR of interpolated frames using vanilla SIREN models remain well under the OF-constrained SIREN,
-even for the best performing, low-frequency range models,
-which confirms than the OF constraint does more than only constraining the fit to high frequencies.
+Constraining the frequency range of vanilla SIREN with $\omega$ down to 5 degrades the fit to observed frames but improves interpolation.
+This suggests that $\omega$ behaves similarly to a regularization parameter by
+controlling a regime of overfitting to the observed frames high frequencies (for high $\omega$ values),
+versus underfitting (for low $\omega$ values).
+Figure \ref{fig_omega} further shows that OF-constrained SIREN achieve far higher interpolation PSNR than
+the best performing vanilla SIREN, confirming than the OF constraint impact goes beyond dampening of the high frequency noise.
 Note that we did not vary the $\omega$ of the OF constrained SIREN in this figure in order to better illustrate our point,
 the red line represents results for the best performing $\omega$.
 The impact of the $\omega$ parameter on OF-constrained SIREN is illustrated separately in Figure \ref{fig_abl_omega}.
@@ -471,12 +476,15 @@ Figure \ref{fig_abl} summarizes the impact of the main parameters of our method.
 In (a) we observe a trade-off between the observed and interpolated frames quality in the low $\lambda$ ranges.
 The quality of interpolated frames peaks at $\lambda=0.12$, beyond which point the interpolated frames quality is limited
 by the quality of the fit to the observed frames, in a similar way to the classical overfitting/underfitting trade-off.
-However, it should be noted that the PSNR of observed frames differs widely depending on the SIREN's width.
-Indeed, as we will show in Section \ref{sec_video_fit}, the OF constraints actually helps narrow SIREN better fit the observed frames.
-In (b) and (c) we observe that both higher learning rates and longer fitting times improve both observed and interpolated frames.
+However, it should be noted that this trade-off differs widely depending on the SIREN's width.
+Indeed, as we will show in Section \ref{sec_video_fit},
+the OF constraints actually improves the fit to observed frames for narrow models.
+In (b) and (c) we observe that both higher learning rates and longer fitting times
+improve both observed and interpolated frames.
 The learning rate is limited in amplitude by instabilities of the optimization procedure,
 while the fitting time is limited by practical time constraints.
-Large $\omega$ (d) also improve the accuracy up to 30, after which instabilities in the optimization see the accuracy drop abruptly.
+Large $\omega$ (d) also improve the accuracy up to 30,
+after which instabilities in the optimization see the accuracy drop abruptly.
 Width and depth (e) show interesting co-dependencies:
 Increasing width improves interpolation up to a peak after which it degrades.
 The peak width gets narrower with increasing depth.
@@ -513,15 +521,16 @@ The peak width gets narrower with increasing depth.
 \end{subfigure}
 \caption{Impact of our method's main parameters. Plots from (a) to (d)
 show both the observed and interpolated frames PSNR
-while plot (e) only shows the interpolated frames PSNR}
+while plot (e) only shows the interpolated frames PSNR.}
 \label{fig_abl}
 \end{figure}
 
+Based on these experiments, our best model was
 
 \subsection{Qualitative analysis}
 \label{sec_qua}
 
-Figure \ref{fig_small} and \ref{fig_large} provide a qualitative illustration to the results of Section \ref{sec_sota}
+Figures \ref{fig_small} and \ref{fig_large} provide a qualitative illustration to the results of Section \ref{sec_sota}.
 The upper frame in Figure \ref{fig_small} shows that our method tends to outperform other methods on videos with limited motion range.
 In particular it seems to better catch high spatial frequency regions (grass, sharp edges of the building).
 In contrast, large motion as illustrated in Figure \ref{fig_large} shows ghosting effects that the OF regularization is not able to address.
@@ -603,7 +612,7 @@ the lower one shows a rare failure case.}
 \end{figure}
 
 The lower part of Figure \ref{fig_small} shows a rare failure case of our method on limited motion ranges:
-some artificial stain-like pattern appear in the sky background,
+some artificial stain-like patterns appear in the sky background,
 suggesting additional care may be needed especially in low frequency regions.
 Despite this rare exception, the overall quality of interpolation
 on limited motion range videos performs on par with the best existing methods.
@@ -672,7 +681,7 @@ As $\mathcal{L}_{obs}$ explicitly maximizes the PSNR of observed frames,
 we expected the addition of the $\mathcal{L}_{of}$ term to negatively impact the PSNR of observed frames,
 especially for capacity-limited SIREN which should have to compromise between satisfying both loss terms.
 It turns out that, for width up to 50, optimizing the SIREN with the additional OF constraint
-actually improves the fit to the observed frames.
+actually improves the fit to observed frames.
 
 \label{sec_video_fit}
 \begin{figure}[h]
@@ -684,54 +693,65 @@ Right: Zoom on the low width regime with the x axis expressed either in number o
 \label{fig_video_fit}
 \end{figure}
 
-Although a complete investigation of this phenomena is out of the scope of this work,
-we highlight how this observation may prove interesting for future work:
-From a practical standpoint, improving the fit of low-capacity INR would lead to better video compression INR.
-It remains to be seen wether such phenomena may be replicated in more practical architectures such as (i.e. [SHO]).
-From a theoretical standpoint, width has been shown to help optimization by alleviating second order effects [SHO].
-Thus, understanding how the OF constraint on the NN derivative somehow improves
-the optimization landscape of narrow network may lead to interesting insights. % XXX
+Although a complete investigation of this phenomenon is out of the scope of this work,
+we highlight how this observation may prove interesting for future works:
+From a practical standpoint, improving the fit of low-capacity INR
+is the key challenge towards practical INR video compression.
+It remains to be seen wether this phenomenon can be replicated on more practical architectures (i.e. [SHO]).
+From a theoretical standpoint, increasing width has been shown to help
+optimization by alleviating second order effects [SHO]
+and guarantee convergence of gradient descent to global minima [SHO].
+As the understanding of gradient descent dynamics in the high curvature low width setting
+is currently an elusive question, understanding how the OF constraint
+helps optimization may provide useful insights into narrow model dynamics.
 
 \section{Current limitations and future work}
 \label{sec_lim}
 
-While we believe our results to be very promising, the proposed method in its current is not yet practical for VFI.
-Here, we discuss what we believe to be the three main limitations of our method,
-and possible ways to address it.
+While our method does reach state of the art interpolation results on limited motion ranges,
+this work is not meant to deliver a production ready VFI system,
+which would require the ability to interpolate high resolution and large motion range videos.
+Instead, we aim to provide actionable insights for future works on both VFI and INR to integrate and build upon.
+Towards that goal, we discuss below what we see as the three main limitations of our method in its current form,
+and possible ways to address these limitations.
 
-\textbf{Slow optimization process.} Fitting 20 frames of a video at $240 \times 360$ resolution currently takes 15 hours on a 4$\times$2080Ti GPU using Pytorch.
+\textbf{Slow optimization process.}
+Fitting 20 frames of a video at $240 \times 360$ resolution currently takes 15 hours on a 4$\times$2080Ti GPU using Pytorch.
 This computation time is an important drawback as it limits our ability to process full resolution video,
- as well as to explore different hyper parameters and variants of the methods within realistic times.
-We expect new methods speeding up the convergence of video INR to be very beneficial to this line of research.
+as well as to explore different hyper parameters and variations of the method within realistic times.
+We expect advances in INR optimization to be very beneficial to this line of research.
 Given recent successes of INR in signal compression [SHO, shape, nerv, coin++],
-we hopefully expect to see such development in INR optimization research.
+we hopefully expect to see such development in the near future.
 
 % Relying on optical flow model.
 \textbf{Reliance on trained optical flow model.}
 SIREN models allow us to apply the optical flow on the exact derivatives of the signal,
 bypassing the heuristics of classical methods without relying on machine learning.
 The optical flow we use, however, is given by a ML model trained on discrete representations, which raises two problems:
-it is subject to generalization errors due to domain shifts,
+it is subject to generalization errors,
 and is subject to finite difference errors such as occlusions.
-Future work will aim to bypass our reliance on ML-based OF using alternative constraints on the exact derivatives.
+Bypassing this reliance on ML-based OF using alternative constraints on the exact derivatives
+of the representation is another interesting way forward.
 
 \textbf{Inability to interpolate large motion range videos.}
 In its current form, we only apply the optical flow constraint on the observed frames of the video.
-This has proven sufficient to reach state-of-the art on limited motion ranges but is not sufficient for large motions.
-A promising axis of improvement would be to apply further regularization to the interpolates frames (e.g. for intra-frame time indices $t=0.5$)).
-Possible regularization methods may include interpolated optical flows or texture similarity constraints as proposed in recent works [SHO],
-which may prevent the ghosting effects illustrated in Figure \ref{fig_w_wo_OF}.
-
+This has proven sufficient to reach state-of-the art on limited motion ranges, but is not sufficient for large motions.
+A promising axis of improvement would be to apply additional constraints to the interpolated frames
+(e.g. for intra-frame time indices $t=0.5$).
+Possible regularization methods may include constraints on intra-frame texture, as proposed in recent works [SHO],
+or interpolated optical flows, which may prevent the ghosting effects illustrated in Figure \ref{fig_large}.
 
 \section{Conclusion}
+\label{sec_conc}
 
-In this paper, we have shown that regularizing INR using the optical flow constraint equation
-enables us to perform VFI without relying on ML for the interpolation step.
-We have shown that this method is sufficient to reach state-of-the-art interpolation on videos with limited motion range,
-without resorting to learning-based interpolation.
-This method is not yet practical for high resolution large motion range videos due to the three limitations highlighted in the previous section.
-Nevertheless, these limitations can be tackled and we hope the insights presented in this paper can serve prove useful in the future,
-either on their own or combined with related methods.
+In this paper, we have shown that SIREN representations of videos
+can be constrained to satisfy the OF constraint using their exact derivatives.
+We have seen that OF-constrained SIREN reach state of the art VFI on limited motion ranges,
+without relying on ML based residual flow and interpolation.
+We have also shown that the OF constraint not only allows SIREN to generate intermediate frames,
+but can also improve the ability of narrow SIREN to fit observed frames.
+We have outlined the limitations of our approach in its current form and outlines
+potentially impactful way forwards for future research.
 
 \bibliographystyle{abbrv}
 \bibliography{references}

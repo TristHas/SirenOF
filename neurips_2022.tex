@@ -237,9 +237,13 @@ One exception is the work of [CITE], in which the authors propose to take into a
 Our work only constrains the first derivatives of the signal.
 We differ from classical works in that we apply the OF to the exact representation derivatives,
 so that we do not need to assume constancy of signal derivatives on any time interval.
-Recent OF-based VFI leverages deep learning for optical flow estimation and interpolation \cite{jiang2018super, liu2017video, li2020video, park2020bmbc},
-while kernel-based approaches avoid explicit motion estimation and warping stages \cite{niklaus2017video1,lee2020adacof,cheng2021multiple}.
-
+Recent OF-based VFI leverages deep learning for optical flow estimation and interpolation.
+Super-SloMo \cite{jiang2018super} is an important study of optical flow based methods.
+The authors use a deep learning model to predict the forward and backward optical flow for intermediate frames and warp two consecutive frames to obtain intermediate frames.
+RRIN \cite{li2020video} uses residual learning to optimize the performance of \cite{jiang2018super} at the motion estimation bound.
+AMBE \cite{park2021asymmetric}, the current state-of-the-art VFI method, proposes an asymmetric motion estimation method based on \cite{park2020bmbc}, which enhances the quality of interpolating frames in the overlapping.
+To avoid explicit motion estimation and warping stages, the kernel-based approach uses convolution to generate intermediate frames directly.
+Lee et al. proposed Adacof \cite{lee2020adacof}, which can use any pixel at any position for convolution operation, so that the convolution kernel is no longer limited to the local range.
 \section{Method}
 \label{sec_method}
 % We fit a video, and test on the middle frames

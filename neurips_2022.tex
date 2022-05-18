@@ -115,7 +115,7 @@ In computer vision, Video Frame Interpolation (VFI) is one task representative o
 VFI models aim to interpolate intermediate frames between the consecutive frames of a video.
 To do so, most successful methods rely on the optical flow
 to guide the interpolation of pixel intensities from the pixel grid of observed frames onto the pixel grid of intermediate frames.
-Classical methods formulate assumptions such as constant movement or acceleration fields between consecutive frames [XXX Classical].
+Classical methods formulate assumptions such as constant movement or acceleration fields between consecutive frames \cite{baker2011database} \cite{barron1994performance} \cite{herbst2009occlusion}.
 The value of each pixel in the inferred intermediate frame is computed by first shifting the pixel intensities of observed frames along the
 optical flow directions before interpolating the shifted intensities onto the intermediate frame's pixel grid.
 Such approaches suffer from the following two main limitations:
@@ -130,13 +130,13 @@ Indeed, both the constant brightness assumption, from which is derived the optic
 and assumptions of constant motion field used by the interpolation process,
 only truly hold at the infinitesimal scale, for time deltas typically much smaller than those of practically used Frames Per Second (FPS).
 
-ML approaches [XXX SHO] have instead proposed to learn the frame interpolation operator from large video collections,
+ML approaches \cite{jiang2018super} \cite{li2020video} \cite{park2021asymmetric} \cite{park2020bmbc} \cite{lee2020adacof} have instead proposed to learn the frame interpolation operator from large video collections,
 without formulating explicit assumption on the signal.
 While these approaches have achieved great success in terms of benchmark performance,
 they are prone to generalization errors caused by domain shifts. % Check me
 Indeed differences between the training set distribution (i.e. VFI benchmark videos)
 and the target video distribution may hinder the performance of ML models, e.g.;
-differences stemming from the range of motion, exposure time, FPS and blur [XXX Generalization].
+differences stemming from the range of motion, exposure time, FPS and blur \cite{zhang2020video}.
 
 % Implicit Neural Representation
 %Meanwhile, another line of research has shown that deep architectures themselves provide powerful priors to represent signals (DIP, SIREN).
@@ -212,16 +212,16 @@ before concluding in Section \ref{sec_conc}.
 \label{sec_related}
 
 \textbf{ Implicit Neural Representations} have met early success in
-shape representation and 3D rendering [XXX Shape, XXX 3D].
+shape representation and 3D rendering \cite{park2019deepsdf} \cite{mescheder2019occupancy} \cite{mildenhall2020nerf}.
 Since then, a number of works have attempted to
-apply INR to different signals including audio [XXX SHO], images [XXX COIN, COIN+++], videos [XXX SHO],
+apply INR to different signals including audio \cite{sitzmann2020implicit} \cite{kim2022learning}, images \cite{dupont2021coin} \cite{dupont2022coin++}, videos \cite{chen2021nerv} \cite{shangguan2022learning} \cite{rho2022neural},
 medical imaging and climate data \cite{dupont2022coin++}.
-In [XXX SIREN] the authors have shown that MLP with sine activations
+In \cite{sitzmann2020implicit} the authors have shown that MLP with sine activations
 could fit representations of images with meaningful representations of their gradient,
 and that such models could be optimized to satisfy constraints on their gradients.
 Combined, these two findings have motivated our idea to apply the optical
 flow constraint to the gradient of SIREN representations of videos.
-A series of recent works have applied INR to video compression [XXX SHO],
+A series of recent works have applied INR to video compression \cite{zhang2021implicit} \cite{chen2021nerv} ,
 with some works \cite{chen2021nerv} even reporting higher PSNR
 than practical codecs on very high compression rates.
 Although closely related to video compression,
@@ -231,9 +231,9 @@ Their approach, CURE, differs from ours in scope:
 they propose to learn a prior on the INR,
 while we only focus on leveraging INR to guide the interpolation process using a given optical flow.
 
-\textbf{Video Frame Interpolation} research has largely relied on optical flow to guide the the video frame interpolation process [XXX Classical].
+\textbf{Video Frame Interpolation} research has largely relied on optical flow to guide the the video frame interpolation process \cite{baker2011database} \cite{barron1994performance} \cite{herbst2009occlusion}.
 Most works have assumed uniform optical flow between consecutive frames so as to linearly interpolate intermediate frames along the optical flow directions.
-One exception is the work of [XXX Quadratic], in which the authors propose to take into account acceleration to perform the interpolation,
+One exception is the work of \cite{xu2019quadratic}, in which the authors propose to take into account acceleration to perform the interpolation,
 leading to quadratic interpolation.
 Our work only constrains the first derivatives of the signal.
 We differ from classical works in that we apply the OF to the exact representation derivatives,
@@ -704,8 +704,8 @@ From a practical standpoint, improving the fit of low-capacity INR
 is the key challenge towards practical INR video compression.
 It remains to be seen wether this phenomenon can be replicated on more practical architectures (i.e. \cite{chen2021nerv}).
 From a theoretical standpoint, increasing width has been shown to help
-optimization by alleviating second order effects [XXX BELKIN]
-and guarantee convergence of gradient descent to global minima [XXX GLOBAL].
+optimization by alleviating second order effects \cite{liu2020linearity}
+and guarantee convergence of gradient descent to global minima \cite{du2018gradient}.
 As the understanding of gradient descent dynamics in the high curvature low width setting
 is currently an elusive question, understanding how the OF constraint
 helps optimization may provide useful insights into narrow model dynamics.
@@ -725,7 +725,7 @@ Fitting 20 frames of a video at $240 \times 360$ resolution currently takes 15 h
 This computation time is an important drawback as it limits our ability to process full resolution video,
 as well as to explore different hyper parameters and variations of the method within realistic times.
 We expect advances in INR optimization to be very beneficial to this line of research.
-Given recent successes of INR in signal compression [SHO, shape, nerv, coin++],
+Given recent successes of INR in signal compression \cite{zhang2021implicit}\cite{dupont2021coin} \cite{dupont2022coin++} \cite{park2019deepsdf} \cite{mescheder2019occupancy} \cite{chen2021nerv},
 we hopefully expect to see such development in the near future.
 
 % Relying on optical flow model.
@@ -743,7 +743,7 @@ In its current form, we only apply the optical flow constraint on the observed f
 This has proven sufficient to reach state-of-the art on limited motion ranges, but is not sufficient for large motions.
 A promising axis of improvement would be to apply additional constraints to the interpolated frames
 (e.g. for intra-frame time indices $t=0.5$).
-Possible regularization methods may include constraints on intra-frame texture, as proposed in recent works [XXX FILM],
+Possible regularization methods may include constraints on intra-frame texture, as proposed in recent works \cite{reda2022film},
 or interpolated optical flows, which may prevent the ghosting effects illustrated in Figure \ref{fig_large}.
 
 \section{Conclusion}
